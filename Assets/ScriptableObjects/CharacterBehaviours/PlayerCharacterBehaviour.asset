@@ -11,4 +11,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d9c8a9bcb9831a4cb6b3dc5a925aca1, type: 3}
   m_Name: PlayerCharacterBehaviour
   m_EditorClassIdentifier: 
-  m_fDistanceToCheckForTilesFromInput: 0.75

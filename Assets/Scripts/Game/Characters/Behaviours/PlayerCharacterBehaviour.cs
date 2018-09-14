@@ -4,22 +4,29 @@ using UnityEngine.AI;
 
 
 [CreateAssetMenu()]
-public class PlayerCharacterBehaviour : CharacterBehaviour
+public class PlayerCharacterBehaviour : ScriptableObject
 {
-	public float m_fDistanceToCheckForWalls = 0.75f;
-
-
-	public override void UpdateCharacterDestination(Character pCharacter)
+	public void UpdateCharacterTileTargets(PlayerCharacter pCharacter)
 	{
 		Vector3 tMoveDirection = QueryMoveInputs();
+		Vector3 tCurrentCharacterForward = pCharacter.transform.forward;
 
-		if (tMoveDirection.sqrMagnitude <= 0.0025f || !CanGoInThatDirection(tMoveDirection, pCharacter))
-			tMoveDirection = pCharacter.transform.forward;
+		if (tMoveDirection == Vector3.zero)
+			return;
 
-		tMoveDirection = MakeDirectionOnOneAxisOnly(tMoveDirection, pCharacter.transform.forward);
+		if (tMoveDirection == -tCurrentCharacterForward)
+		{
+			Tile pNextTileInDirection = FindWalkableTileInDirection(tMoveDirection, pCharacter.transform.position - (tMoveDirection * 0.5f));  // Raycast from a bit behind the character to find the one under him if he just got passed its middle but didn't leave it yet
+			pCharacter.ForceSetCurrentTileTarget(pNextTileInDirection);
+		}
+		else
+		{
+			Vector3 tCurrentTargetPosition = pCharacter.GetCurrentTargetPosition();
 
-		pCharacter.m_pNavMeshAgent.SetDestination(pCharacter.transform.position + (tMoveDirection * m_fDistanceToCheckForWalls));
-		pCharacter.transform.forward = tMoveDirection;
+			Tile pNextTileInDirection = FindWalkableTileInDirection(tMoveDirection, tCurrentTargetPosition);
+			if (pNextTileInDirection != null && (pNextTileInDirection.transform.position - tCurrentTargetPosition).normalized != tCurrentCharacterForward)
+				pCharacter.SetNextTileTarget(pNextTileInDirection);
+		}
 	}
 
 	private Vector3 QueryMoveInputs()
@@ -27,40 +34,21 @@ public class PlayerCharacterBehaviour : CharacterBehaviour
 		float fHorizontal = Input.GetAxis("Horizontal");
 		float fVertical = Input.GetAxis("Vertical");
 
-		return new Vector3(fHorizontal, 0.0f, fVertical);
+		Vector3 tInputVector = new Vector3(fHorizontal, 0.0f, fVertical);
+
+		return tInputVector.sqrMagnitude > 0.0025f ? tInputVector.normalized : Vector3.zero;
 	}
 
-	/// <summary>
-	/// Will remove one of X or Z, whichever smaller, to be a one-axis only direction. If both are equal, will make the direction perpendicular to current character's direction
-	/// </summary>
-	private Vector3 MakeDirectionOnOneAxisOnly(Vector3 tDirection, Vector3 tCurrentCharacterDirection)
+	public Tile FindWalkableTileInDirection(Vector3 tDirection, Vector3 tFromPosition)
 	{
-		if ((tDirection.x - tDirection.z).Sqrd() <= 0.025f)
-		{
-			if (tCurrentCharacterDirection.x.Sqrd() > tCurrentCharacterDirection.z.Sqrd())
-			{
-				tDirection.x = 0.0f;
-			}
-			else
-			{
-				tDirection.z = 0.0f;
-			}
-		}
-		else if (tDirection.x.Sqrd() > tDirection.z.Sqrd())
-		{
-			tDirection.z = 0.0f;
-		}
-		else
-		{
-			tDirection.x = 0.0f;
-		}
+		RaycastHit tHit;
+		if (!Physics.Raycast(tFromPosition + (tDirection * 1.1f) + (Vector3.up * 2.0f), Vector3.down, out tHit, 2.0f, LayerMask.GetMask("Tile"), QueryTriggerInteraction.Collide))
+			return null;
 
-		return tDirection.normalized;
-	}
+		Tile pTile = tHit.collider.GetComponent<Tile>();
+		if (!pTile.IsWalkable())
+			pTile = null;
 
-	private bool CanGoInThatDirection(Vector3 tDirection, Character pFromCharacter)
-	{
-		NavMeshHit tHit;
-		return !NavMesh.Raycast(pFromCharacter.transform.position, pFromCharacter.transform.position + (tDirection.normalized * m_fDistanceToCheckForWalls), out tHit, NavMesh.AllAreas);
+		return pTile;
 	}
 }

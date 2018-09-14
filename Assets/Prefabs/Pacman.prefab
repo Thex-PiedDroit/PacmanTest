@@ -54,8 +54,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4610032744338974}
-  - component: {fileID: 114117860338136100}
-  - component: {fileID: 195957435081337872}
+  - component: {fileID: 114527227207322576}
   m_Layer: 0
   m_Name: Pacman
   m_TagString: Untagged
@@ -188,7 +187,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1543675058034318}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &114117860338136100
+--- !u!114 &114527227207322576
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -196,11 +195,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1706911192636610}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f1f1d29bea4c38f4e9691a5619c6a006, type: 3}
+  m_Script: {fileID: 11500000, guid: 6c9ae4c0e0c95964f994e7ce327914b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_pNavMeshAgent: {fileID: 195957435081337872}
-  m_pBehaviour: {fileID: 11400000, guid: 8f0c38e9548ee0d48bdc433bf91af7aa, type: 2}
+  m_pPlayerCharacterBehaviour: {fileID: 11400000, guid: 8f0c38e9548ee0d48bdc433bf91af7aa,
+    type: 2}
+  m_fMoveSpeed: 5
 --- !u!135 &135400151925143754
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -208,29 +208,8 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1494102481215666}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!195 &195957435081337872
-NavMeshAgent:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1706911192636610}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.3
-  m_Speed: 5
-  m_Acceleration: 288000
-  avoidancePriority: 50
-  m_AngularSpeed: 288000
-  m_StoppingDistance: 0.05
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 0
-  m_AutoRepath: 1
-  m_Height: 1.25
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4

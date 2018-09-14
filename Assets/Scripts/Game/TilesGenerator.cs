@@ -12,6 +12,8 @@ public class TilesGenerator : MonoBehaviour
 	public string m_sMapFileName = "Map1";
 	public float m_fTilesSize = 1.0f;
 
+	public PlayerCharacter m_pPlayerCharacter = null;
+
 	public Tile m_pTilePrefab = null;
 	public GameObject m_pGround = null;
 
@@ -26,6 +28,11 @@ public class TilesGenerator : MonoBehaviour
 
 	#endregion
 
+
+	private void Start()
+	{
+		GenerateTiles();
+	}
 
 	public void GenerateTiles()
 	{
@@ -69,7 +76,12 @@ public class TilesGenerator : MonoBehaviour
 			}
 
 			pCurrentTile.transform.localPosition = new Vector3(fPosX, 0.0f, fPosY);
-			pCurrentTile.SetTileType((ETileType)pTilesTypes[i]);
+
+			ETileType eTileType = (ETileType)pTilesTypes[i];
+			pCurrentTile.SetTileType(eTileType);
+
+			if (eTileType == ETileType.PACMAN_SPAWNER)
+				m_pPlayerCharacter.SetSpawnTile(pCurrentTile);
 		}
 	}
 

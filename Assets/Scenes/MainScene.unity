@@ -4017,6 +4017,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_sMapFileName: Map1
   m_fTilesSize: 1
+  m_pPlayerCharacter: {fileID: 453735763}
   m_pTilePrefab: {fileID: 114305466549952304, guid: 2929c59f111822242bfd3c6611c46323,
     type: 2}
   m_pGround: {fileID: 1521170717}
@@ -13074,6 +13075,12 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 453131203}
   m_Script: {fileID: 11500000, guid: d59f7462d49d9a641a1e0fba15d6ed0a, type: 3}
+--- !u!114 &453735763 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 114527227207322576, guid: 7d07ca1d17b679645b2c18d8cea7fda3,
+    type: 2}
+  m_PrefabInternal: {fileID: 1004414831}
+  m_Script: {fileID: 11500000, guid: 6c9ae4c0e0c95964f994e7ce327914b7, type: 3}
 --- !u!1001 &461357000
 Prefab:
   m_ObjectHideFlags: 0
@@ -25216,7 +25223,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4610032744338974, guid: 7d07ca1d17b679645b2c18d8cea7fda3, type: 2}
       propertyPath: m_LocalRotation.y
-      value: 0.7071068
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4610032744338974, guid: 7d07ca1d17b679645b2c18d8cea7fda3, type: 2}
       propertyPath: m_LocalRotation.z
@@ -25224,7 +25231,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4610032744338974, guid: 7d07ca1d17b679645b2c18d8cea7fda3, type: 2}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4610032744338974, guid: 7d07ca1d17b679645b2c18d8cea7fda3, type: 2}
       propertyPath: m_RootOrder

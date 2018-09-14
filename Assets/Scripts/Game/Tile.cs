@@ -52,6 +52,14 @@ public class Tile : MonoBehaviour
 		m_pPellet.InitPellet(m_eTileType == ETileType.SUPER_PELLET);
 	}
 
+	public bool IsAdjacentTo(Tile pTile)
+	{
+		bool bIsAdjacentOnX = (Mathf.Abs(transform.position.x) - Mathf.Abs(pTile.transform.position.x)).Sqrd() == 1.0f;
+		bool bIsAdjacentOnY = (Mathf.Abs(transform.position.z) - Mathf.Abs(pTile.transform.position.z)).Sqrd() == 1.0f;
+
+		return bIsAdjacentOnX ^ bIsAdjacentOnY;
+	}
+
 	public bool IsWalkable()
 	{
 		bool bIsWalkable = true;
