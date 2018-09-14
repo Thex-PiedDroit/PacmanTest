@@ -23,8 +23,7 @@ static public class Toolkit
 		for (int i = 0; i < pAllDataObjectsGUIDs.Length; ++i)
 		{
 			string sPath = AssetDatabase.GUIDToAssetPath(pAllDataObjectsGUIDs[i]);
-			//if (!sPath.EndsWith(".unity"))
-				pDataObjectsPaths.Add(sPath);
+			pDataObjectsPaths.Add(sPath);
 		}
 
 		AssetDatabase.ForceReserializeAssets(pDataObjectsPaths, ForceReserializeAssetsOptions.ReserializeAssetsAndMetadata);
