@@ -10,7 +10,7 @@ public enum ETileType
 	WARP			= '=',
 	GHOST_DOOR		= '-',
 	GHOST_SPAWNER	= 'G',
-	BONUS_SPAWNER	= 'B',
+	PACMAN_SPAWNER	= 'P',
 	EMPTY			= ' '
 }
 
@@ -27,6 +27,7 @@ public class Tile : MonoBehaviour
 #region Variables (private)
 
 	private ETileType m_eTileType = ETileType.EMPTY;
+	public ETileType TileType { get { return m_eTileType; } }
 
 	#endregion
 
@@ -49,5 +50,27 @@ public class Tile : MonoBehaviour
 
 		m_pPellet.gameObject.SetActive(true);
 		m_pPellet.InitPellet(m_eTileType == ETileType.SUPER_PELLET);
+	}
+
+	public bool IsAdjacentTo(Tile pTile)
+	{
+		bool bIsTrue = (transform.position - pTile.transform.position).sqrMagnitude == 1.0f;
+		return bIsTrue;
+	}
+
+	public bool IsWalkable()
+	{
+		bool bIsWalkable = true;
+
+		switch (m_eTileType)
+		{
+			case ETileType.WALL:
+			case ETileType.GHOST_DOOR:
+			case ETileType.GHOST_SPAWNER:
+				bIsWalkable = false;
+				break;
+		}
+
+		return bIsWalkable;
 	}
 }

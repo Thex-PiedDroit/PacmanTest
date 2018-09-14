@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(TilesGenerator))]
+[CustomEditor(typeof(MapManager))]
 public class TilesGeneratorEditor : Editor
 {
 	public override void OnInspectorGUI()
@@ -10,6 +10,6 @@ public class TilesGeneratorEditor : Editor
 		DrawDefaultInspector();
 
 		if (GUILayout.Button("Generate Tiles"))
-			(target as TilesGenerator).GenerateTiles();
+			(target as MapManager).GenerateTiles();
 	}
 }

@@ -17,7 +17,7 @@ XXXXXX.XX XGGGGGGX XX.XXXXXX
 =     .   XGGGGGGX   .     =
 XXXXXX.XX XGGGGGGX XX.XXXXXX
      X.XX XXXXXXXX XX.X     
-     X.XX    B     XX.X     
+     X.XX    P     XX.X     
      X.XX XXXXXXXX XX.X     
 XXXXXX.XX XXXXXXXX XX.XXXXXX
 X............XX............X
