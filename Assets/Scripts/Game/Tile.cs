@@ -27,6 +27,7 @@ public class Tile : MonoBehaviour
 #region Variables (private)
 
 	private ETileType m_eTileType = ETileType.EMPTY;
+	public ETileType TileType { get { return m_eTileType; } }
 
 	#endregion
 
@@ -49,5 +50,21 @@ public class Tile : MonoBehaviour
 
 		m_pPellet.gameObject.SetActive(true);
 		m_pPellet.InitPellet(m_eTileType == ETileType.SUPER_PELLET);
+	}
+
+	public bool IsWalkable()
+	{
+		bool bIsWalkable = true;
+
+		switch (m_eTileType)
+		{
+			case ETileType.WALL:
+			case ETileType.GHOST_DOOR:
+			case ETileType.GHOST_SPAWNER:
+				bIsWalkable = false;
+				break;
+		}
+
+		return bIsWalkable;
 	}
 }
