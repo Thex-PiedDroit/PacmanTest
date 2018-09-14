@@ -13,6 +13,7 @@ public class TilesGenerator : MonoBehaviour
 	public float m_fTilesSize = 1.0f;
 
 	public Tile m_pTilePrefab = null;
+	public GameObject m_pGround = null;
 
 	public List<Tile> m_pTiles = null;
 
@@ -32,13 +33,18 @@ public class TilesGenerator : MonoBehaviour
 
 		List<char> pTilesTypes = ExtractMapDataFromString();
 
+		m_pGround.transform.localScale = new Vector3(m_iGridSizeX, m_pGround.transform.localScale.y, m_iGridSizeY);
+
+		float fHalfGridSizeX = (m_iGridSizeX / 2.0f) - (m_fTilesSize * 0.5f);
+		float fHalfGridSizeY = (m_iGridSizeY / 2.0f) - (m_fTilesSize * 0.5f);
+
 		for (int i = 0; i < pTilesTypes.Count; ++i)
 		{
 			int iX = i % m_iGridSizeX;
 			int iY = i / m_iGridSizeX;
 
-			float fPosX = (iX - (m_iGridSizeX / 2.0f)) * m_fTilesSize;
-			float fPosY = (-iY + (m_iGridSizeY / 2.0f)) * m_fTilesSize;
+			float fPosX = (iX - fHalfGridSizeX) * m_fTilesSize;
+			float fPosY = (-iY + fHalfGridSizeY) * m_fTilesSize;
 
 			Tile pCurrentTile = null;
 

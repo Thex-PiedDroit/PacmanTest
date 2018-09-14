@@ -10,7 +10,7 @@ public enum ETileType
 	WARP			= '=',
 	GHOST_DOOR		= '-',
 	GHOST_SPAWNER	= 'G',
-	BONUS_SPAWNER	= 'B',
+	PACMAN_SPAWNER	= 'P',
 	EMPTY			= ' '
 }
 
