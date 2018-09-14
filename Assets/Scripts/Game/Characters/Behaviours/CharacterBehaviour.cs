@@ -4,5 +4,5 @@ using UnityEngine;
 
 abstract public class CharacterBehaviour : ScriptableObject
 {
-	abstract public void UpdateCharacter(Character pCharacter);
+	abstract public void UpdateCharacterDestination(Character pCharacter);
 }

@@ -22,6 +22,6 @@ public class Character : MonoBehaviour
 
 	private void Update()
 	{
-		m_pBehaviour.UpdateCharacter(this);
+		m_pBehaviour.UpdateCharacterDestination(this);
 	}
 }

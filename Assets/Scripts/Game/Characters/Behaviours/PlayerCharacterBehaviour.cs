@@ -6,27 +6,20 @@ using UnityEngine.AI;
 [CreateAssetMenu()]
 public class PlayerCharacterBehaviour : CharacterBehaviour
 {
-	public float m_fDistanceToCheckForTilesFromInput = 2.0f;
+	public float m_fDistanceToCheckForWalls = 0.75f;
 
 
-	public override void UpdateCharacter(Character pCharacter)
+	public override void UpdateCharacterDestination(Character pCharacter)
 	{
-		Vector3 tInputDirection = QueryMoveInputs();
-		Tile pTileInDirection = null;
+		Vector3 tMoveDirection = QueryMoveInputs();
 
-		if (tInputDirection != Vector3.zero)
-		{
-			pTileInDirection = FindTileInDirection(tInputDirection, pCharacter);
+		if (tMoveDirection.sqrMagnitude <= 0.0025f || !CanGoInThatDirection(tMoveDirection, pCharacter))
+			tMoveDirection = pCharacter.transform.forward;
 
-			if (pTileInDirection.transform.position != pCharacter.m_pNavMeshAgent.destination)
-			{
-				pCharacter.m_pNavMeshAgent.SetDestination(pTileInDirection.transform.position);
-				return;
-			}
-		}
+		tMoveDirection = MakeDirectionOnOneAxisOnly(tMoveDirection, pCharacter.transform.forward);
 
-		pTileInDirection = FindTileInDirection(pCharacter.transform.forward, pCharacter);
-		pCharacter.m_pNavMeshAgent.SetDestination(pTileInDirection.transform.position);
+		pCharacter.m_pNavMeshAgent.SetDestination(pCharacter.transform.position + (tMoveDirection * m_fDistanceToCheckForWalls));
+		pCharacter.transform.forward = tMoveDirection;
 	}
 
 	private Vector3 QueryMoveInputs()
@@ -37,20 +30,37 @@ public class PlayerCharacterBehaviour : CharacterBehaviour
 		return new Vector3(fHorizontal, 0.0f, fVertical);
 	}
 
-	private Tile FindTileInDirection(Vector3 tDirection, Character pFromCharacter)
+	/// <summary>
+	/// Will remove one of X or Z, whichever smaller, to be a one-axis only direction. If both are equal, will make the direction perpendicular to current character's direction
+	/// </summary>
+	private Vector3 MakeDirectionOnOneAxisOnly(Vector3 tDirection, Vector3 tCurrentCharacterDirection)
 	{
-		Vector3 tPositionInDirection = pFromCharacter.transform.position + (tDirection.normalized * m_fDistanceToCheckForTilesFromInput);
+		if ((tDirection.x - tDirection.z).Sqrd() <= 0.025f)
+		{
+			if (tCurrentCharacterDirection.x.Sqrd() > tCurrentCharacterDirection.z.Sqrd())
+			{
+				tDirection.x = 0.0f;
+			}
+			else
+			{
+				tDirection.z = 0.0f;
+			}
+		}
+		else if (tDirection.x.Sqrd() > tDirection.z.Sqrd())
+		{
+			tDirection.z = 0.0f;
+		}
+		else
+		{
+			tDirection.x = 0.0f;
+		}
 
+		return tDirection.normalized;
+	}
+
+	private bool CanGoInThatDirection(Vector3 tDirection, Character pFromCharacter)
+	{
 		NavMeshHit tHit;
-		NavMesh.SamplePosition(tPositionInDirection, out tHit, float.MaxValue, 1);		// TODO: Kind of an overkill at this point, although it allows for graceful handling of perfectly diagonal input; should simplify this at a later point
-
-		RaycastHit tTileHit;
-		Physics.Raycast(tHit.position + (Vector3.up * 2.0f), Vector3.down, out tTileHit, 3.0f, LayerMask.GetMask("Tile"), QueryTriggerInteraction.Collide);
-
-		Tile pTile = tTileHit.collider.GetComponent<Tile>();
-		if (!pTile.IsWalkable())
-			pTile = null;
-
-		return pTile;
+		return !NavMesh.Raycast(pFromCharacter.transform.position, pFromCharacter.transform.position + (tDirection.normalized * m_fDistanceToCheckForWalls), out tHit, NavMesh.AllAreas);
 	}
 }
