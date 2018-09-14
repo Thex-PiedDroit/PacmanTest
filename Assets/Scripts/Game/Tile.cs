@@ -54,10 +54,8 @@ public class Tile : MonoBehaviour
 
 	public bool IsAdjacentTo(Tile pTile)
 	{
-		bool bIsAdjacentOnX = (Mathf.Abs(transform.position.x) - Mathf.Abs(pTile.transform.position.x)).Sqrd() == 1.0f;
-		bool bIsAdjacentOnY = (Mathf.Abs(transform.position.z) - Mathf.Abs(pTile.transform.position.z)).Sqrd() == 1.0f;
-
-		return bIsAdjacentOnX ^ bIsAdjacentOnY;
+		bool bIsTrue = (transform.position - pTile.transform.position).sqrMagnitude == 1.0f;
+		return bIsTrue;
 	}
 
 	public bool IsWalkable()

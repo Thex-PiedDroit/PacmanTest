@@ -12,20 +12,24 @@ public class PlayerCharacterBehaviour : ScriptableObject
 		Vector3 tCurrentCharacterForward = pCharacter.transform.forward;
 
 		if (tMoveDirection == Vector3.zero)
+		{
+			pCharacter.ClearInputsTileTarget();
 			return;
+		}
 
-		if (tMoveDirection == -tCurrentCharacterForward)
+		if (tMoveDirection == -tCurrentCharacterForward)	// "Abort current tile target, go back (therefore, directly set a new target)
 		{
 			Tile pNextTileInDirection = FindWalkableTileInDirection(tMoveDirection, pCharacter.transform.position - (tMoveDirection * 0.5f));  // Raycast from a bit behind the character to find the one under him if he just got passed its middle but didn't leave it yet
-			pCharacter.ForceSetCurrentTileTarget(pNextTileInDirection);
+			pCharacter.SetCurrentTileTarget(pNextTileInDirection);
+			pCharacter.ClearInputsTileTarget();
 		}
-		else
+		else												// Suggest a next direction for when the current tile target has been reached
 		{
 			Vector3 tCurrentTargetPosition = pCharacter.GetCurrentTargetPosition();
 
-			Tile pNextTileInDirection = FindWalkableTileInDirection(tMoveDirection, tCurrentTargetPosition);
+			Tile pNextTileInDirection = FindWalkableTileInDirection(tMoveDirection, tCurrentTargetPosition - (pCharacter.transform.forward * 0.4f));
 			if (pNextTileInDirection != null && (pNextTileInDirection.transform.position - tCurrentTargetPosition).normalized != tCurrentCharacterForward)
-				pCharacter.SetNextTileTarget(pNextTileInDirection);
+				pCharacter.SetInputsTileTarget(pNextTileInDirection);
 		}
 	}
 

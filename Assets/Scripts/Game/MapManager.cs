@@ -1,13 +1,17 @@
 ﻿
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 using UnityEngine;
 using System.IO;
 using System.Collections.Generic;
-using UnityEditor;
 
 
-public class TilesGenerator : MonoBehaviour
+public class MapManager : MonoBehaviour
 {
 #region Variables (public)
+
+	static public MapManager Instance = null;
 
 	public string m_sMapFileName = "Map1";
 	public float m_fTilesSize = 1.0f;
@@ -28,6 +32,22 @@ public class TilesGenerator : MonoBehaviour
 
 	#endregion
 
+
+	private void Awake()
+	{
+		if (Instance != null)
+		{
+			if (this != Instance)
+			{
+				EditorUtility.DisplayDialog("Manager duplicate found", "A second instance of " + GetType() + " on the object \"" + name + "\" has been found and has been destroyed. Please remove one of them from the scene", "Will do");
+				Destroy(this);
+			}
+
+			return;
+		}
+
+		Instance = this;
+	}
 
 	private void Start()
 	{
@@ -57,14 +77,16 @@ public class TilesGenerator : MonoBehaviour
 
 			if (m_pTiles.Count <= i)
 			{
-				if (Application.isPlaying)
-				{
-					pCurrentTile = Instantiate(m_pTiles[0], transform);
-				}
-				else
+#if UNITY_EDITOR
+				if (!Application.isPlaying)
 				{
 					pCurrentTile = PrefabUtility.InstantiatePrefab(m_pTilePrefab) as Tile;
 					pCurrentTile.transform.parent = transform;
+				}
+				else
+#endif
+				{
+					pCurrentTile = Instantiate(m_pTiles[0], transform);
 				}
 
 				m_pTiles.Add(pCurrentTile);
@@ -131,5 +153,21 @@ public class TilesGenerator : MonoBehaviour
 		}
 
 		return pTilesTypes;
+	}
+
+	public Tile GetTileFromPosition(float fPosX, float fPosZ)
+	{
+		float fHalfGridSizeX = (m_iGridSizeX / 2.0f) - (m_fTilesSize * 0.5f);
+		float fHalfGridSizeY = (m_iGridSizeY / 2.0f) - (m_fTilesSize * 0.5f);
+
+		fPosX += fHalfGridSizeX;
+		fPosX /= m_fTilesSize;
+
+		fPosZ -= fHalfGridSizeY;
+		fPosZ /= m_fTilesSize;
+
+		int iTileIndex = (int)fPosX - ((int)fPosZ * m_iGridSizeX);
+
+		return (iTileIndex >= 0 && iTileIndex < m_pTiles.Count) ? m_pTiles[iTileIndex] : null;
 	}
 }

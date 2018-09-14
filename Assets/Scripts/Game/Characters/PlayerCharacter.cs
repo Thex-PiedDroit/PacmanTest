@@ -14,17 +14,14 @@ public class PlayerCharacter : MonoBehaviour
 #region Variables (private)
 
 	private Tile m_pCurrentTileTarget = null;	// Character will find the next one whenever reaching its target
-	private Tile m_pNextTileFromInputs = null;	// If this is not null upon reaching the current target, and it is adjacent, this will become the new target. Otherwise, we will get closer before setting it as a target
-
+	private Tile m_pInputsTileTarget = null;	// If this is not null upon reaching the current target, and it is adjacent, this will become the new target. Otherwise, we will get closer before setting it as a target
+												// This system makes it possible to gracefully handle diagonal inputs while keeping movements non-diagonal. In other words: more complicated in order to feel better
 	private float m_fLastFrameMovementOvershoot = 0.0f;
 
 	#endregion
 
 
-	public void SetSpawnTile(Tile pTile)
-	{
-		transform.position = pTile.transform.position;
-	}
+#region Behaviour
 
 	private void Update()
 	{
@@ -44,23 +41,9 @@ public class PlayerCharacter : MonoBehaviour
 		if (tMeToDestination.sqrMagnitude <= tMoveThisFrame.sqrMagnitude)
 		{
 			m_fLastFrameMovementOvershoot = (tMoveThisFrame - tMeToDestination).magnitude;
-
 			transform.position = m_pCurrentTileTarget.transform.position;
 
-			if (m_pNextTileFromInputs != null && m_pNextTileFromInputs.IsAdjacentTo(m_pCurrentTileTarget))
-			{
-				m_pCurrentTileTarget = m_pNextTileFromInputs;
-				m_pNextTileFromInputs = null;
-			}
-			else
-			{
-				m_pCurrentTileTarget = m_pPlayerCharacterBehaviour.FindWalkableTileInDirection(transform.forward, transform.position);
-			}
-
-			if (m_pCurrentTileTarget != null)
-				transform.forward = (m_pCurrentTileTarget.transform.position - transform.position).normalized;
-			else
-				m_fLastFrameMovementOvershoot = 0.0f;
+			AcquireNextTileTargetInCurrentDirection();
 		}
 		else
 		{
@@ -68,25 +51,100 @@ public class PlayerCharacter : MonoBehaviour
 		}
 	}
 
-	public void ForceSetCurrentTileTarget(Tile pTile)
+	#endregion
+
+#region Behaviour Helpers
+
+	private void AcquireNextTileTargetInCurrentDirection()
+	{
+		Tile pNextTileTarget = null;
+
+		if (m_pInputsTileTarget != null)
+		{
+			pNextTileTarget = FindTileToReachInputsOne();
+
+			if (pNextTileTarget == m_pInputsTileTarget)
+				ClearInputsTileTarget();
+		}
+		else
+		{
+			pNextTileTarget = m_pPlayerCharacterBehaviour.FindWalkableTileInDirection(transform.forward, transform.position);
+		}
+
+		SetCurrentTileTarget(pNextTileTarget);
+	}
+
+	/// <summary>
+	/// Looks to the tiles adjacent both to our current one and the inputs target to find which one is walkable
+	/// </summary>
+	private Tile FindAdjacentTileClosestToInputsTarget()
+	{
+		Vector3 tInputsTargetPos = m_pInputsTileTarget.transform.position;
+		Tile pTileOnMyXAxis = MapManager.Instance.GetTileFromPosition(transform.position.x, tInputsTargetPos.z);
+
+		if (pTileOnMyXAxis.IsWalkable())
+			return pTileOnMyXAxis;
+
+		return MapManager.Instance.GetTileFromPosition(tInputsTargetPos.x, transform.position.z);
+	}
+
+	/// <summary>
+	/// Tries to find a tile that will get us closer to the inputs target, if needed.
+	/// If the inputs target is already adjacent to our current one, will return it instead (don't forget to call ClearInputsTarget() if you use it).
+	/// </summary>
+	private Tile FindTileToReachInputsOne()
+	{
+		Tile pTileTarget = null;
+
+		if (m_pInputsTileTarget.IsAdjacentTo(MapManager.Instance.GetTileFromPosition(transform.position.x, transform.position.z)))
+			pTileTarget = m_pInputsTileTarget;		// If it's already adjacent to where we are, directly go there
+		else
+			pTileTarget = FindAdjacentTileClosestToInputsTarget();
+
+		return pTileTarget;
+	}
+
+	#endregion
+
+
+#region Setters
+
+	public void SetSpawnTile(Tile pTile)
+	{
+		transform.position = pTile.transform.position;
+	}
+
+	public void SetCurrentTileTarget(Tile pTile)
 	{
 		m_pCurrentTileTarget = pTile;
-		m_pNextTileFromInputs = null;
 
-		if (m_pCurrentTileTarget != null)
+		if (pTile != null)
 			transform.forward = (pTile.transform.position - transform.position).normalized;
+		else
+			m_fLastFrameMovementOvershoot = 0.0f;
 	}
 
-	public void SetNextTileTarget(Tile pTile)
+	public void SetInputsTileTarget(Tile pTile)
 	{
+		m_pInputsTileTarget = pTile;
+
 		if (m_pCurrentTileTarget == null)
-			ForceSetCurrentTileTarget(pTile);
-		else
-			m_pNextTileFromInputs = pTile;
+			SetCurrentTileTarget(FindTileToReachInputsOne());
 	}
+
+	public void ClearInputsTileTarget()
+	{
+		m_pInputsTileTarget = null;
+	}
+
+	#endregion
+
+#region Getters
 
 	public Vector3 GetCurrentTargetPosition()
 	{
 		return m_pCurrentTileTarget?.transform.position ?? transform.position;
 	}
+
+	#endregion
 }
