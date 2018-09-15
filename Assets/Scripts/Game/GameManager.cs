@@ -132,6 +132,7 @@ public class GameManager : MonoBehaviour
 	private void SpawnGhosts()
 	{
 		StopAllCoroutines();
+		m_iNextGhostToReleaseIfPossible = 0;
 
 		for (int i = 0; i < m_pGhostSpawnTiles.Count; ++i)
 		{
