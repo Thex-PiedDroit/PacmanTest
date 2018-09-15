@@ -63,15 +63,33 @@ public class GameManager : MonoBehaviour
 		}
 	}
 
+	public void RestartGame()
+	{
+		PlayerCharacter.Instance.m_pPickupsModule.ResetScores();
+
+		EndGameScreenManager.Instance.HideEndGameScreen();
+		ScoresManager.Instance.SetDisplayVisible(true);
+
+		MapManager.Instance.ResetTilesWithCurrentMap();
+		LaunchGame();
+	}
+
 	private void LaunchGame()
 	{
 		m_iCurrentPlayerLives = m_pGameModeData.m_iInitialPlayerLives;
+		ScoresManager.Instance.InitLives(m_iCurrentPlayerLives);
+
 		SpawnPlayerCharacter();
 		SpawnGhosts();
 
 			// TODO: Game start countdown here
 		PlayerCharacter.Instance.MakePlayerAlive();
 		ReleaseNextGhostNow();
+	}
+
+	public void QuitGame()
+	{
+		Application.Quit();	// TODO: Add "Are you sure?" dialog
 	}
 
 	private void SpawnPlayerCharacter()
@@ -101,7 +119,8 @@ public class GameManager : MonoBehaviour
 
 	private void GameOver()
 	{
-		// TODO: Implement game over
+		SetAllGhostsDead();
+		EndGameScreenManager.Instance.DisplayEndGameScreen();
 	}
 
 	private void SpawnGhosts()
@@ -148,6 +167,12 @@ public class GameManager : MonoBehaviour
 
 		if (m_iCurrentDeadGhosts > 0)
 			StartCoroutine(ReleaseNextGhostAfterDelay());
+	}
+
+	private void SetAllGhostsDead()
+	{
+		for (int i = 0; i < m_pGhosts.Count; ++i)
+			m_pGhosts[i].SetDead();
 	}
 
 
