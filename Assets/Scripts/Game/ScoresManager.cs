@@ -7,8 +7,6 @@ public class ScoresManager : MonoBehaviour
 {
 #region Variables (public)
 
-	public PlayerCharacter m_pPlayerCharacter = null;
-
 	public TextMeshProUGUI m_pScoreValueText = null;
 
 	#endregion
@@ -20,15 +18,17 @@ public class ScoresManager : MonoBehaviour
 	#endregion
 
 
-	private void Awake()
+	private void Start()
 	{
-		m_pPlayerCharacter.m_pPickupsModule.OnPointsGained += UpdateScore;
+		PlayerCharacter.Instance.m_pPickupsModule.OnPointsGained += UpdateScore;
 	}
 
 	private void OnDestroy()
 	{
-		if (m_pPlayerCharacter != null && m_pPlayerCharacter.m_pPickupsModule != null)
-			m_pPlayerCharacter.m_pPickupsModule.OnPointsGained -= UpdateScore;
+		PlayerCharacter pPlayer = PlayerCharacter.Instance;
+
+		if (pPlayer != null && pPlayer.m_pPickupsModule != null)
+			pPlayer.m_pPickupsModule.OnPointsGained -= UpdateScore;
 	}
 
 	private void UpdateScore(int iCurrentScore)

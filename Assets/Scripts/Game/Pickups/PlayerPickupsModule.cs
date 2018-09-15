@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 
 
-public class PlayerPickupsModule : MonoBehaviour
+public class PlayerPickupsModule : CharacterProceduralVariablesModule
 {
 #region Variables (public)
 
@@ -18,22 +18,16 @@ public class PlayerPickupsModule : MonoBehaviour
 
 #region Variables (private)
 
+	private int m_iCollectedPellets = 0;
 	private int m_iGamePoints = 0;
-
-	/// <summary>
-	/// string is sVariableName;
-	/// object is pVariableValue;
-	/// </summary>
-	private Dictionary<string, object> m_pProceduralVariables = null;
-
 	private List<PickupEffect> m_pCurrentActivePickupEffects = null;
 
 	#endregion
 
 
-	private void Awake()
+	override protected void Awake()
 	{
-		m_pProceduralVariables = new Dictionary<string, object>();
+		base.Awake();
 		m_pCurrentActivePickupEffects = new List<PickupEffect>();
 	}
 
@@ -49,10 +43,27 @@ public class PlayerPickupsModule : MonoBehaviour
 		OnPointsGained?.Invoke(m_iGamePoints);
 	}
 
-	public void ResetPoints()
+	public void RegisterPelletCollect()
+	{
+		++m_iCollectedPellets;
+	}
+
+	public int GetCurrentPelletsCount()
+	{
+		return m_iCollectedPellets;
+	}
+
+	public void ResetCollectedPellets()
+	{
+		m_iCollectedPellets = 0;
+	}
+
+	public void ResetScores()
 	{
 		m_iGamePoints = 0;
 		OnPointsGained?.Invoke(m_iGamePoints);
+
+		m_iCollectedPellets = 0;
 	}
 
 	public void GiveActiveEffect(PickupEffect pEffect)
@@ -69,32 +80,5 @@ public class PlayerPickupsModule : MonoBehaviour
 	public void RemoveActiveEffect(PickupEffect pEffect)
 	{
 		m_pCurrentActivePickupEffects.Remove(pEffect);
-	}
-
-	public object GetVariable(string sVariableName)
-	{
-		return m_pProceduralVariables.ContainsKey(sVariableName) ? m_pProceduralVariables[sVariableName] : null;
-	}
-
-	public bool GetVariableAsBool(string sVariableName)
-	{
-		object pValue = GetVariable(sVariableName);
-		return pValue != null ? (bool)pValue : false;
-	}
-
-	public void SetVariable(string sVariableName, object pValue)
-	{
-		m_pProceduralVariables[sVariableName] = pValue;
-	}
-
-	public void ResetVariable(string sVariableName)
-	{
-		if (m_pProceduralVariables.ContainsKey(sVariableName))
-			m_pProceduralVariables[sVariableName] = null;
-	}
-
-	private void ResetVariables()
-	{
-		m_pProceduralVariables.Clear();
 	}
 }

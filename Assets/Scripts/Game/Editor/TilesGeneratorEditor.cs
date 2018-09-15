@@ -10,6 +10,6 @@ public class TilesGeneratorEditor : Editor
 		DrawDefaultInspector();
 
 		if (GUILayout.Button("Generate Tiles"))
-			(target as MapManager).GenerateTiles();
+			(target as MapManager).LoadMap("Map1");
 	}
 }

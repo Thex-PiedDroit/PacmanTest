@@ -46,7 +46,7 @@ public class Tile : MonoBehaviour
 		InitPellet();
 	}
 
-	private void InitPellet()
+	public void InitPellet()
 	{
 		if (m_eTileType != ETileType.PELLET && m_eTileType != ETileType.SUPER_PELLET)
 		{
