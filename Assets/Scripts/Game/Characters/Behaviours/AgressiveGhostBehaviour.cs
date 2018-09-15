@@ -35,6 +35,9 @@ public class AgressiveGhostBehaviour : GhostBehaviour
 
 	override public void UpdateGhostBehaviour(Ghost pGhost)
 	{
+		if (pGhost.IsDead())
+			return;
+
 		pGhost.m_pNavMeshAgent.SetDestination(PlayerCharacter.Instance.transform.position);
 
 		if (!pGhost.m_pProceduralVariablesModule.GetVariableAsBool(c_sVariableName_bIsEnraged))

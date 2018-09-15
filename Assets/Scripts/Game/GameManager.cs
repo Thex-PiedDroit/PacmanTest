@@ -21,6 +21,8 @@ public class GameManager : MonoBehaviour
 	public FleeGhostBehaviour m_pFleeGhostBehaviour = null;
 	public List<GhostBehaviour> m_pGhostsBehaviours = null;
 
+	public bool SuperPelletEffectAboutToWearOut { get; set; } = false;
+
 	#endregion
 
 #region Variables (private)
@@ -192,7 +194,8 @@ public class GameManager : MonoBehaviour
 	{
 		for (int i = 0; i < m_pGhosts.Count; ++i)
 		{
-			m_pGhosts[i].m_pProceduralVariablesModule.SetVariable(c_sVariableName_pBehaviourGhostHadBeforeFleeing, m_pGhosts[i].m_pBehaviour);
+			if (m_pGhosts[i].m_pBehaviour != m_pFleeGhostBehaviour)
+				m_pGhosts[i].m_pProceduralVariablesModule.SetVariable(c_sVariableName_pBehaviourGhostHadBeforeFleeing, m_pGhosts[i].m_pBehaviour);
 			m_pGhosts[i].GiveBehaviour(m_pFleeGhostBehaviour);
 		}
 	}

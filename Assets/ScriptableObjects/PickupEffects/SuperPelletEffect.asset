@@ -13,3 +13,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_iPointsWorth: 50
   m_fEffectDurationInSeconds: 8
+  m_fEffectEndWarningStartTimeFromEnd: 2

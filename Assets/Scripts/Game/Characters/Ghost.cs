@@ -28,6 +28,8 @@ public class Ghost : MonoBehaviour
 
 	private Tile m_pSpawnTile = null;
 
+	private Color m_tCurrentColor = Color.white;
+
 	private bool m_bAlive = false;
 
 	#endregion
@@ -41,12 +43,17 @@ public class Ghost : MonoBehaviour
 
 	private void Update()
 	{
-		if (m_bAlive && m_pBehaviour != null)
+		if (m_pBehaviour != null)
 			m_pBehaviour.UpdateGhostBehaviour(this);
 	}
 
 	public void SetGhostColor(Color tGhostColor)
 	{
+		if (tGhostColor == m_tCurrentColor)
+			return;
+
+		m_tCurrentColor = tGhostColor;
+
 		int iVerticesCount = m_pMeshFilter.mesh.vertices.Length;
 		Color[] pColors = new Color[iVerticesCount];
 
