@@ -27,15 +27,14 @@ public class CharacterProceduralVariablesModule : MonoBehaviour
 		m_pProceduralVariables = new Dictionary<string, object>();
 	}
 
-	public object GetVariable(string sVariableName)
+	public object GetVariable(string sVariableName, object pDefaultValue = null)
 	{
-		return m_pProceduralVariables.ContainsKey(sVariableName) ? m_pProceduralVariables[sVariableName] : null;
+		return m_pProceduralVariables.ContainsKey(sVariableName) ? m_pProceduralVariables[sVariableName] : pDefaultValue;
 	}
 
 	public bool GetVariableAsBool(string sVariableName)
 	{
-		object pValue = GetVariable(sVariableName);
-		return pValue != null ? (bool)pValue : false;
+		return (bool)GetVariable(sVariableName, false);
 	}
 
 	public void SetVariable(string sVariableName, object pValue)
@@ -49,7 +48,7 @@ public class CharacterProceduralVariablesModule : MonoBehaviour
 			m_pProceduralVariables[sVariableName] = null;
 	}
 
-	public void ResetVariables()
+	public void ResetAllVariables()
 	{
 		m_pProceduralVariables.Clear();
 	}

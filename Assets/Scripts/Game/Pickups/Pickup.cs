@@ -26,6 +26,7 @@ public class Pickup : MonoBehaviour
 		PlayerCharacter pPlayer = pOther.GetComponent<PlayerCharacter>();
 		Assert.IsTrue(pPlayer != null, "Something that is not a player character has triggered a pickup. Please make sure the layers and collisions are correctly setup. Object in question is " + pOther.name + " and pickup is " + name);
 
+		m_pPickupEffect.GivePointsToPlayer(pPlayer.m_pPickupsModule);
 		m_pPickupEffect.GiveEffectToPlayer(pPlayer.m_pPickupsModule);
 		gameObject.SetActive(false);
 	}

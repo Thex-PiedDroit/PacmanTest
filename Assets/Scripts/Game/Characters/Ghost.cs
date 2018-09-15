@@ -9,7 +9,10 @@ public class Ghost : MonoBehaviour
 {
 #region Variables (public)
 
-	public Action OnDeath = null;
+	/// <summary>
+	/// Ghost is this
+	/// </summary>
+	public Action<Ghost> OnDeath = null;
 
 	public NavMeshAgent m_pNavMeshAgent = null;
 	public MeshFilter m_pMeshFilter = null;
@@ -22,6 +25,10 @@ public class Ghost : MonoBehaviour
 	#endregion
 
 #region Variables (private)
+
+	private Tile m_pSpawnTile = null;
+
+	private Color m_tCurrentColor = Color.white;
 
 	private bool m_bAlive = false;
 
@@ -36,12 +43,17 @@ public class Ghost : MonoBehaviour
 
 	private void Update()
 	{
-		if (m_bAlive && m_pBehaviour != null)
+		if (m_pBehaviour != null)
 			m_pBehaviour.UpdateGhostBehaviour(this);
 	}
 
 	public void SetGhostColor(Color tGhostColor)
 	{
+		if (tGhostColor == m_tCurrentColor)
+			return;
+
+		m_tCurrentColor = tGhostColor;
+
 		int iVerticesCount = m_pMeshFilter.mesh.vertices.Length;
 		Color[] pColors = new Color[iVerticesCount];
 
@@ -59,7 +71,7 @@ public class Ghost : MonoBehaviour
 	public void KillGhost()
 	{
 		SetDead();
-		OnDeath?.Invoke();
+		OnDeath?.Invoke(this);
 	}
 
 	/// <summary>
@@ -69,14 +81,20 @@ public class Ghost : MonoBehaviour
 	{
 		m_bAlive = false;
 		m_pNavMeshAgent.enabled = false;
-		m_pProceduralVariablesModule.ResetVariables();
 	}
 
 	public void SetAlive()
 	{
 		m_bAlive = true;
+		transform.position = m_pSpawnTile.transform.position;
+
 		m_pNavMeshAgent.enabled = true;
 		m_pBehaviour.ResetGhostBehaviour(this);
+	}
+
+	public void SetSpawnTile(Tile pTile)
+	{
+		m_pSpawnTile = pTile;
 	}
 
 	private void OnTriggerEnter(Collider pOther)
@@ -84,6 +102,9 @@ public class Ghost : MonoBehaviour
 		PlayerCharacter pPlayer = pOther.GetComponent<PlayerCharacter>();
 		Assert.IsTrue(pPlayer != null, "A ghost has collided with something that is not the player character (" + pOther.name + "). Please make sure the layers and collisions are correctly setup.");
 
-		pPlayer.KillPlayer();
+		if (!pPlayer.CanKillGhosts)
+			pPlayer.KillPlayer();
+		else
+			KillGhost();
 	}
 }

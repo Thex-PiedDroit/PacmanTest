@@ -7,7 +7,7 @@ public class AgressiveGhostBehaviour : GhostBehaviour
 {
 #region Variables (public)
 
-	public float m_fEnrageSpeed = 1.5f;
+	public float m_fEnrageSpeedMultiplier = 1.5f;
 	public int m_iPelletsCollectedCountToEnrage = 0;
 
 	#endregion
@@ -35,6 +35,9 @@ public class AgressiveGhostBehaviour : GhostBehaviour
 
 	override public void UpdateGhostBehaviour(Ghost pGhost)
 	{
+		if (pGhost.IsDead())
+			return;
+
 		pGhost.m_pNavMeshAgent.SetDestination(PlayerCharacter.Instance.transform.position);
 
 		if (!pGhost.m_pProceduralVariablesModule.GetVariableAsBool(c_sVariableName_bIsEnraged))
@@ -44,7 +47,7 @@ public class AgressiveGhostBehaviour : GhostBehaviour
 	private void CheckIfShouldEnrage(Ghost pGhost)
 	{
 		int iCurrentlyCollectedPellets = PlayerCharacter.Instance.m_pPickupsModule.GetCurrentPelletsCount();
-		int iCollectedPelletsAtBehaviourStart = (int)(pGhost.m_pProceduralVariablesModule.GetVariable(c_sVariableName_iPelletsCollectedByPlayerAtBehaviourStart));
+		int iCollectedPelletsAtBehaviourStart = (int)(pGhost.m_pProceduralVariablesModule.GetVariable(c_sVariableName_iPelletsCollectedByPlayerAtBehaviourStart, 0));
 
 		if (iCurrentlyCollectedPellets - iCollectedPelletsAtBehaviourStart >= m_iPelletsCollectedCountToEnrage)
 			EnrageGhost(pGhost);
@@ -53,6 +56,6 @@ public class AgressiveGhostBehaviour : GhostBehaviour
 	private void EnrageGhost(Ghost pGhost)
 	{
 		pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_bIsEnraged, true);
-		pGhost.m_pNavMeshAgent.speed = pGhost.m_fRegularSpeed * m_fEnrageSpeed;
+		pGhost.m_pNavMeshAgent.speed = pGhost.m_fRegularSpeed * m_fEnrageSpeedMultiplier;
 	}
 }

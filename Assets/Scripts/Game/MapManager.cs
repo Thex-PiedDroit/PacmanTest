@@ -17,6 +17,7 @@ public class MapManager : MonoBehaviour
 
 	public Tile m_pTilePrefab = null;
 	public PelletEffect m_pRegularPelletsEffect = null;
+	public SuperPelletEffect m_pSuperPelletsEffect = null;
 
 	public GameObject m_pGround = null;
 
@@ -54,16 +55,15 @@ public class MapManager : MonoBehaviour
 
 		m_pGround.transform.localScale = new Vector3(m_iGridSizeX, m_pGround.transform.localScale.y, m_iGridSizeY);
 
-		float fHalfGridSizeX = (m_iGridSizeX / 2.0f) - (m_fTilesSize * 0.5f);
-		float fHalfGridSizeY = (m_iGridSizeY / 2.0f) - (m_fTilesSize * 0.5f);
+		Vector2 tHalfMapSize = GetHalfMapSize();
 
 		for (int i = 0; i < pTilesTypes.Count; ++i)
 		{
 			int iX = i % m_iGridSizeX;
 			int iY = i / m_iGridSizeX;
 
-			float fPosX = (iX - fHalfGridSizeX) * m_fTilesSize;
-			float fPosY = (-iY + fHalfGridSizeY) * m_fTilesSize;
+			float fPosX = (iX - tHalfMapSize.x) * m_fTilesSize;
+			float fPosY = (-iY + tHalfMapSize.y) * m_fTilesSize;
 
 			Tile pCurrentTile = null;
 
@@ -152,6 +152,9 @@ public class MapManager : MonoBehaviour
 			case ETileType.PELLET:
 				pTile.m_pPellet.m_pPickupEffect = m_pRegularPelletsEffect;
 				break;
+			case ETileType.SUPER_PELLET:
+				pTile.m_pPellet.m_pPickupEffect = m_pSuperPelletsEffect;
+				break;
 			case ETileType.WARP:
 				InitPortal(pTile);
 				break;
@@ -189,17 +192,37 @@ public class MapManager : MonoBehaviour
 
 	public Tile GetTileFromPosition(float fPosX, float fPosZ)
 	{
-		float fHalfGridSizeX = (m_iGridSizeX / 2.0f) - (m_fTilesSize * 0.5f);
-		float fHalfGridSizeY = (m_iGridSizeY / 2.0f) - (m_fTilesSize * 0.5f);
+		Vector2 tHalfMapSize = GetHalfMapSize();
 
-		fPosX += fHalfGridSizeX;
+		fPosX += tHalfMapSize.x;
 		fPosX /= m_fTilesSize;
 
-		fPosZ -= fHalfGridSizeY;
+		fPosZ -= tHalfMapSize.y;
 		fPosZ /= m_fTilesSize;
 
 		int iTileIndex = (int)fPosX - ((int)fPosZ * m_iGridSizeX);
 
 		return (iTileIndex >= 0 && iTileIndex < m_pTiles.Count) ? m_pTiles[iTileIndex] : null;
+	}
+
+	public Vector3 GetPosOnMapFurtherFromPosition(Vector3 tPos)
+	{
+		Vector2 tHalfMapSize = GetHalfMapSize();
+
+		float fXInNearestConer = tHalfMapSize.x * (tPos.x >= 0.0f ? 1.0f : -1.0f);
+		float fZInNearestConer = tHalfMapSize.y * (tPos.z >= 0.0f ? 1.0f : -1.0f);
+
+		Vector3 tPosPushedOnNearestCorner = new Vector3(fXInNearestConer, 0.0f, fZInNearestConer);
+
+		return -tPosPushedOnNearestCorner;	// Opposite corner
+	}
+
+
+	private Vector2 GetHalfMapSize()
+	{
+		float fHalfMapSizeX = (m_iGridSizeX / 2.0f) - (m_fTilesSize * 0.5f);
+		float fHalfMapSizeY = (m_iGridSizeY / 2.0f) - (m_fTilesSize * 0.5f);
+
+		return new Vector2(fHalfMapSizeX, fHalfMapSizeY);
 	}
 }

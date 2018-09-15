@@ -8,10 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2612f68288694c542ada7e997b6f6934, type: 3}
-  m_Name: DefaultGameModeData
+  m_Script: {fileID: 11500000, guid: 88500ca294dded541af0e135118c86f7, type: 3}
+  m_Name: SuperPelletEffect
   m_EditorClassIdentifier: 
-  m_iInitialPlayerLives: 3
-  m_iPointsToGainOneLife: 1000
-  m_fSecondsBetweenGhostsActivation: 10
-  m_sDefaultMapName: Map1
+  m_iPointsWorth: 50
+  m_fEffectDurationInSeconds: 8
+  m_fEffectEndWarningStartTimeFromEnd: 2

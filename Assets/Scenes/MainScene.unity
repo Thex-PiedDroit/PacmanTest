@@ -4287,6 +4287,8 @@ MonoBehaviour:
     type: 2}
   m_pRegularPelletsEffect: {fileID: 11400000, guid: cbe5997c5d5fcfc46bdb3c6819c1008e,
     type: 2}
+  m_pSuperPelletsEffect: {fileID: 11400000, guid: 594ab9ddb45c7fa48badd272e6a909bf,
+    type: 2}
   m_pGround: {fileID: 1521170717}
   m_pPortalVisuals:
   - {fileID: 1488177520}
@@ -31267,6 +31269,8 @@ MonoBehaviour:
     type: 2}
   m_pPlayerCharacterContainer: {fileID: 38194856}
   m_pGhostsContainer: {fileID: 716642629}
+  m_pFleeGhostBehaviour: {fileID: 11400000, guid: c2ceaf9fa4c8dcd419842d393537b701,
+    type: 2}
   m_pGhostsBehaviours:
   - {fileID: 11400000, guid: d5c438e74c228234eb4415d1d7431722, type: 2}
 --- !u!1001 &1130568407
