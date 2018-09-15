@@ -69,13 +69,12 @@ public class PlayerCharacter : MonoBehaviour
 		if (m_pInputsTileTarget != null)
 		{
 			pNextTileTarget = FindTileToReachInputsOne();
-
 			if (pNextTileTarget == m_pInputsTileTarget)
 				ClearInputsTileTarget();
 		}
 		else
 		{
-			pNextTileTarget = m_pPlayerCharacterBehaviour.FindWalkableTileInDirection(transform.forward, transform.position);
+			pNextTileTarget = m_pPlayerCharacterBehaviour.FindWalkableTileInDirection(transform.forward, m_pCurrentTileTarget.transform.position);
 		}
 
 		SetCurrentTileTarget(pNextTileTarget);
@@ -87,12 +86,16 @@ public class PlayerCharacter : MonoBehaviour
 	private Tile FindAdjacentTileClosestToInputsTarget()
 	{
 		Vector3 tInputsTargetPos = m_pInputsTileTarget.transform.position;
-		Tile pTileOnMyXAxis = MapManager.Instance.GetTileFromPosition(transform.position.x, tInputsTargetPos.z);
+		Tile pTileOnMyAxis = MapManager.Instance.GetTileFromPosition(transform.position.x, tInputsTargetPos.z);
 
-		if (pTileOnMyXAxis.IsWalkable())
-			return pTileOnMyXAxis;
+		if (pTileOnMyAxis.IsWalkable())
+			return pTileOnMyAxis;
 
-		return MapManager.Instance.GetTileFromPosition(tInputsTargetPos.x, transform.position.z);
+		pTileOnMyAxis = MapManager.Instance.GetTileFromPosition(tInputsTargetPos.x, transform.position.z);
+		if (pTileOnMyAxis.IsWalkable())
+			return pTileOnMyAxis;
+
+		return null;
 	}
 
 	/// <summary>
@@ -133,10 +136,27 @@ public class PlayerCharacter : MonoBehaviour
 
 	public void SetInputsTileTarget(Tile pTile)
 	{
+		if (pTile == m_pCurrentTileTarget)
+			return;
+
 		m_pInputsTileTarget = pTile;
 
 		if (m_pCurrentTileTarget == null)
-			SetCurrentTileTarget(FindTileToReachInputsOne());
+		{
+			Tile pNewCurrentTile = FindTileToReachInputsOne();
+
+			if (pNewCurrentTile != null)
+			{
+				if (pNewCurrentTile == pTile)
+					m_pInputsTileTarget = null;
+
+				SetCurrentTileTarget(pNewCurrentTile);
+			}
+			else
+			{
+				m_pInputsTileTarget = null;     // Tile cannot be reached from adjacent tile, refuse suggestion
+			}
+		}
 	}
 
 	public void ClearInputsTileTarget()
