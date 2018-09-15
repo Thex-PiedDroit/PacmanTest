@@ -19,6 +19,8 @@ public class MapManager : MonoBehaviour
 	public PlayerCharacter m_pPlayerCharacter = null;
 
 	public Tile m_pTilePrefab = null;
+	public PelletEffect m_pRegularPelletsEffect = null;
+
 	public GameObject m_pGround = null;
 
 	public List<Transform> m_pPortalVisuals = null;
@@ -163,10 +165,19 @@ public class MapManager : MonoBehaviour
 	{
 		pTile.SetTileType(eTileType);
 
-		if (eTileType == ETileType.PACMAN_SPAWNER)
-			m_pPlayerCharacter.SetSpawnTile(pTile);
-		else if (eTileType == ETileType.WARP)
-			InitPortal(pTile);
+		switch (eTileType)
+		{
+			case ETileType.PELLET:
+				pTile.m_pPellet.m_pPickupEffect = m_pRegularPelletsEffect;
+				break;
+			case ETileType.WARP:
+				InitPortal(pTile);
+				break;
+			case ETileType.PACMAN_SPAWNER:
+				m_pPlayerCharacter.SetSpawnTile(pTile);
+				break;
+		}
+			
 	}
 
 	private void InitPortal(Tile pTile)

@@ -21,7 +21,10 @@ public class Tile : MonoBehaviour
 #region Variables (public)
 
 	public GameObject m_pWallObject = null;
-	public Pellet m_pPellet = null;
+	public Pickup m_pPellet = null;
+
+	public float m_fSuperPelletScale = 1.0f;
+	public float m_fRegularPelletScale = 0.3f;
 
 	#endregion
 
@@ -52,7 +55,7 @@ public class Tile : MonoBehaviour
 		}
 
 		m_pPellet.gameObject.SetActive(true);
-		m_pPellet.InitPellet(m_eTileType == ETileType.SUPER_PELLET);
+		m_pPellet.transform.localScale = Vector3.one * (m_eTileType == ETileType.SUPER_PELLET ? m_fSuperPelletScale : m_fRegularPelletScale);
 	}
 
 	public void SetConnectedPortal(Tile pTile)

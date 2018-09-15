@@ -7,6 +7,9 @@ public class PlayerCharacter : MonoBehaviour
 #region Variables (public)
 
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
+
+	public PlayerPickupsModule m_pPickupsModule = null;
+
 	public float m_fMoveSpeed = 5.0f;
 
 	#endregion

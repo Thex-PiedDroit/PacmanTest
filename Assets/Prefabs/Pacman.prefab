@@ -21,7 +21,6 @@ GameObject:
   - component: {fileID: 4995756866475822}
   - component: {fileID: 33146564417753764}
   - component: {fileID: 23522210778815426}
-  - component: {fileID: 135400151925143754}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -55,7 +54,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4610032744338974}
   - component: {fileID: 114527227207322576}
-  m_Layer: 0
+  - component: {fileID: 114825896971917340}
+  - component: {fileID: 135158830439173354}
+  m_Layer: 30
   m_Name: Pacman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,16 +201,28 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_pPlayerCharacterBehaviour: {fileID: 11400000, guid: 8f0c38e9548ee0d48bdc433bf91af7aa,
     type: 2}
+  m_pPickupsModule: {fileID: 114825896971917340}
   m_fMoveSpeed: 5
---- !u!135 &135400151925143754
+--- !u!114 &114825896971917340
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1706911192636610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be7fcb301f53c3f468016ad10f2482b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!135 &135158830439173354
 SphereCollider:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1494102481215666}
+  m_GameObject: {fileID: 1706911192636610}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.75, z: 0}
