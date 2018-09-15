@@ -1,6 +1,7 @@
 ﻿
 using System;
 using UnityEngine;
+using UnityEngine.AI;
 
 
 public class PlayerCharacter : MonoBehaviour
@@ -15,8 +16,11 @@ public class PlayerCharacter : MonoBehaviour
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
 
 	public PlayerPickupsModule m_pPickupsModule = null;
+	public NavMeshObstacle m_pNavMeshObstacle = null;
 
 	public float m_fMoveSpeed = 5.0f;
+
+	public bool CanKillGhosts { get; set; } = false;
 
 	#endregion
 
@@ -150,7 +154,7 @@ public class PlayerCharacter : MonoBehaviour
 		m_bAlive = false;
 		m_pCurrentTileTarget = null;
 		m_pInputsTileTarget = null;
-		m_pPickupsModule.ResetVariables();
+		m_pPickupsModule.ResetAllVariables();
 
 		OnDeath?.Invoke();
 	}
@@ -159,7 +163,7 @@ public class PlayerCharacter : MonoBehaviour
 	{
 		m_pCurrentTileTarget = pTile;
 
-		if (pTile != null)
+		if (pTile != null && pTile.transform.position != transform.position)
 			transform.forward = (pTile.transform.position - transform.position).normalized;
 		else
 			m_fLastFrameMovementOvershoot = 0.0f;

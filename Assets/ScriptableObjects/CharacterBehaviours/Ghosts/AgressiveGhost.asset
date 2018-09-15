@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Name: AgressiveGhost
   m_EditorClassIdentifier: 
   m_tGhostColor: {r: 0.764151, g: 0, b: 0.05960966, a: 1}
-  m_fEnrageSpeed: 1.3
+  m_fEnrageSpeedMultiplier: 1.3
   m_iPelletsCollectedCountToEnrage: 20

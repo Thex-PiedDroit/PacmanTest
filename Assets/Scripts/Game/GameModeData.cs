@@ -19,7 +19,6 @@ public class GameModeData : ScriptableObject
 	[Space()]
 	[Header("Ghosts")]
 	public float m_fSecondsBetweenGhostsActivation = 10.0f;
-	public float m_fVulnerabilityDurationInSecondsDuringSuperPellet = 6.0f;
 
 	#endregion
 
