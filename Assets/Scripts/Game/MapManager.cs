@@ -16,8 +16,6 @@ public class MapManager : MonoBehaviour
 	public string m_sMapFileName = "Map1";
 	public float m_fTilesSize = 1.0f;
 
-	public PlayerCharacter m_pPlayerCharacter = null;
-
 	public Tile m_pTilePrefab = null;
 	public PelletEffect m_pRegularPelletsEffect = null;
 
@@ -42,18 +40,8 @@ public class MapManager : MonoBehaviour
 
 	private void Awake()
 	{
-		if (Instance != null)
-		{
-			if (this != Instance)
-			{
-				EditorUtility.DisplayDialog("Manager duplicate found", "A second instance of " + GetType() + " on the object \"" + name + "\" has been found and has been destroyed. Please remove one of them from the scene", "Will do");
-				Destroy(this);
-			}
-
+		if (!Toolkit.InitSingleton(this, ref Instance))
 			return;
-		}
-
-		Instance = this;
 	}
 
 	private void Start()
@@ -174,7 +162,7 @@ public class MapManager : MonoBehaviour
 				InitPortal(pTile);
 				break;
 			case ETileType.PACMAN_SPAWNER:
-				m_pPlayerCharacter.SetSpawnTile(pTile);
+				PlayerCharacter.Instance.SetSpawnTile(pTile);
 				break;
 		}
 			

@@ -6,6 +6,8 @@ public class PlayerCharacter : MonoBehaviour
 {
 #region Variables (public)
 
+	static public PlayerCharacter Instance = null;
+
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
 
 	public PlayerPickupsModule m_pPickupsModule = null;
@@ -23,6 +25,12 @@ public class PlayerCharacter : MonoBehaviour
 
 	#endregion
 
+
+	private void Awake()
+	{
+		if (!Toolkit.InitSingleton(this, ref Instance))
+			return;
+	}
 
 #region Behaviour
 
