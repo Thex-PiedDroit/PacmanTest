@@ -21,6 +21,8 @@ public class MapManager : MonoBehaviour
 	public Tile m_pTilePrefab = null;
 	public GameObject m_pGround = null;
 
+	public List<Transform> m_pPortalVisuals = null;
+
 	public List<Tile> m_pTiles = null;
 
 	#endregion
@@ -29,6 +31,9 @@ public class MapManager : MonoBehaviour
 
 	private int m_iGridSizeX = 0;
 	private int m_iGridSizeY = 0;
+
+	private Tile m_pUnconnectedPortal = null;
+	private int m_iPlacedPortalVisuals = 0;
 
 	#endregion
 
@@ -57,6 +62,9 @@ public class MapManager : MonoBehaviour
 	public void GenerateTiles()
 	{
 		HideExcessTiles();
+
+		m_pUnconnectedPortal = null;
+		m_iPlacedPortalVisuals = 0;
 
 		List<char> pTilesTypes = ExtractMapDataFromString();
 
@@ -99,11 +107,7 @@ public class MapManager : MonoBehaviour
 
 			pCurrentTile.transform.localPosition = new Vector3(fPosX, 0.0f, fPosY);
 
-			ETileType eTileType = (ETileType)pTilesTypes[i];
-			pCurrentTile.SetTileType(eTileType);
-
-			if (eTileType == ETileType.PACMAN_SPAWNER)
-				m_pPlayerCharacter.SetSpawnTile(pCurrentTile);
+			InitTileWithType(pCurrentTile, (ETileType)pTilesTypes[i]);
 		}
 	}
 
@@ -153,6 +157,33 @@ public class MapManager : MonoBehaviour
 		}
 
 		return pTilesTypes;
+	}
+
+	private void InitTileWithType(Tile pTile, ETileType eTileType)
+	{
+		pTile.SetTileType(eTileType);
+
+		if (eTileType == ETileType.PACMAN_SPAWNER)
+			m_pPlayerCharacter.SetSpawnTile(pTile);
+		else if (eTileType == ETileType.WARP)
+			InitPortal(pTile);
+	}
+
+	private void InitPortal(Tile pTile)
+	{
+		if (m_pUnconnectedPortal == null)
+		{
+			m_pUnconnectedPortal = pTile;
+		}
+		else
+		{
+			pTile.SetConnectedPortal(m_pUnconnectedPortal);
+			m_pUnconnectedPortal.SetConnectedPortal(pTile);
+			m_pUnconnectedPortal = null;
+		}
+
+		m_pPortalVisuals[m_iPlacedPortalVisuals].position = pTile.transform.position;
+		++m_iPlacedPortalVisuals;
 	}
 
 	public Tile GetTileFromPosition(float fPosX, float fPosZ)
