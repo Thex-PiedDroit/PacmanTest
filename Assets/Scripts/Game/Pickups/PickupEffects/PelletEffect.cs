@@ -20,6 +20,7 @@ public class PelletEffect : PickupEffect
 	override public void GiveEffectToPlayer(PlayerPickupsModule pPickupsModule)
 	{
 		GivePointsToPlayer(pPickupsModule);
+		pPickupsModule.RegisterPelletCollect();
 		// Doesn't do anything else, shouldn't give itself to the module for update or anything
 	}
 }

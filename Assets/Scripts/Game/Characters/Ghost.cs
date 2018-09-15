@@ -8,8 +8,8 @@ public class Ghost : MonoBehaviour
 #region Variables (public)
 
 	public NavMeshAgent m_pNavMeshAgent = null;
-
 	public MeshFilter m_pMeshFilter = null;
+	public CharacterProceduralVariablesModule m_pProceduralVariablesModule = null;
 
 	public GhostBehaviour m_pBehaviour = null;
 
@@ -26,16 +26,15 @@ public class Ghost : MonoBehaviour
 
 	private void Start()
 	{
-		SetGhostColor(m_pBehaviour.m_tGhostColor);
-		m_pNavMeshAgent.speed = m_fRegularSpeed;
+		m_pBehaviour.InitBehaviour(this);
 	}
 
 	private void Update()
 	{
-		m_pBehaviour.UpdateGhostDestination(this);
+		m_pBehaviour.UpdateGhostBehaviour(this);
 	}
 
-	private void SetGhostColor(Color tGhostColor)
+	public void SetGhostColor(Color tGhostColor)
 	{
 		int iVerticesCount = m_pMeshFilter.mesh.vertices.Length;
 		Color[] pColors = new Color[iVerticesCount];

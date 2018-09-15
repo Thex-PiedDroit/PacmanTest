@@ -37,6 +37,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4406925564501092}
   - component: {fileID: 114519521247496918}
+  - component: {fileID: 114587349206845806}
   - component: {fileID: 136287876946572940}
   - component: {fileID: 195387882101981970}
   m_Layer: 31
@@ -201,8 +202,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_pNavMeshAgent: {fileID: 195387882101981970}
   m_pMeshFilter: {fileID: 33429830426028096}
+  m_pProceduralVariablesModule: {fileID: 114587349206845806}
   m_pBehaviour: {fileID: 0}
   m_fRegularSpeed: 4.8
+--- !u!114 &114587349206845806
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1473692359259078}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae8aba7a87659c549ab8994a7a75a335, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!136 &136287876946572940
 CapsuleCollider:
   m_ObjectHideFlags: 1
@@ -210,7 +223,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1473692359259078}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2

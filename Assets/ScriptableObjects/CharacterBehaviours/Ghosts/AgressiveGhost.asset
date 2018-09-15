@@ -11,4 +11,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e23e8e58dfd37b4ba7aca0d9b67a7d8, type: 3}
   m_Name: AgressiveGhost
   m_EditorClassIdentifier: 
-  m_tGhostColor: {r: 1, g: 0, b: 0, a: 1}
+  m_tGhostColor: {r: 0.764151, g: 0, b: 0.05960966, a: 1}
+  m_fEnrageSpeed: 1.5
+  m_iPelletsCollectedCountToEnrage: 20
