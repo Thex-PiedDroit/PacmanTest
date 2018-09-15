@@ -7,6 +7,9 @@ public class PlayerCharacter : MonoBehaviour
 #region Variables (public)
 
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
+
+	public PlayerPickupsModule m_pPickupsModule = null;
+
 	public float m_fMoveSpeed = 5.0f;
 
 	#endregion
@@ -41,7 +44,11 @@ public class PlayerCharacter : MonoBehaviour
 		if (tMeToDestination.sqrMagnitude <= tMoveThisFrame.sqrMagnitude)
 		{
 			m_fLastFrameMovementOvershoot = (tMoveThisFrame - tMeToDestination).magnitude;
-			transform.position = m_pCurrentTileTarget.transform.position;
+
+			if (m_pCurrentTileTarget.TileType == ETileType.WARP)
+				transform.position = m_pCurrentTileTarget.GetWarpPosition();
+			else
+				transform.position = m_pCurrentTileTarget.transform.position;
 
 			AcquireNextTileTargetInCurrentDirection();
 		}

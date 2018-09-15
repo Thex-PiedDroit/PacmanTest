@@ -19,11 +19,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4476144651328144}
-  - component: {fileID: 114622500794605602}
+  - component: {fileID: 114094794558558950}
   - component: {fileID: 33737791233336136}
   - component: {fileID: 23554733409450940}
   - component: {fileID: 135003274548673358}
-  m_Layer: 0
+  - component: {fileID: 54209574215939820}
+  m_Layer: 16
   m_Name: Pellet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,6 +191,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1063307799556738}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &54209574215939820
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1063307799556738}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!65 &65311657165722712
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -214,6 +230,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0.5, z: 0}
+--- !u!114 &114094794558558950
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1063307799556738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa7dee88391d01f4dbeef95c0de0b3fc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pPickupEffect: {fileID: 0}
 --- !u!114 &114305466549952304
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -226,18 +254,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_pWallObject: {fileID: 1317355364638912}
-  m_pPellet: {fileID: 114622500794605602}
---- !u!114 &114622500794605602
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1063307799556738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 602570a1f092f7a4189d613360e82d29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_pPellet: {fileID: 114094794558558950}
   m_fSuperPelletScale: 1
   m_fRegularPelletScale: 0.3
 --- !u!135 &135003274548673358
@@ -247,7 +264,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1063307799556738}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5

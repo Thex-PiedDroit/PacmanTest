@@ -21,6 +21,7 @@ TagManager:
   - 
   - 
   - 
+  - Pickup
   - 
   - 
   - 
@@ -34,9 +35,8 @@ TagManager:
   - 
   - 
   - 
-  - 
-  - 
-  - 
+  - Pacman
+  - Ghost
   m_SortingLayers:
   - name: Default
     uniqueID: 0

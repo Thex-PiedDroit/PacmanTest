@@ -1,5 +1,6 @@
 ﻿
 using UnityEngine;
+using UnityEngine.Assertions;
 
 
 public enum ETileType
@@ -20,7 +21,10 @@ public class Tile : MonoBehaviour
 #region Variables (public)
 
 	public GameObject m_pWallObject = null;
-	public Pellet m_pPellet = null;
+	public Pickup m_pPellet = null;
+
+	public float m_fSuperPelletScale = 1.0f;
+	public float m_fRegularPelletScale = 0.3f;
 
 	#endregion
 
@@ -28,6 +32,8 @@ public class Tile : MonoBehaviour
 
 	private ETileType m_eTileType = ETileType.EMPTY;
 	public ETileType TileType { get { return m_eTileType; } }
+
+	private Tile m_pConnectedPortal = null;
 
 	#endregion
 
@@ -49,7 +55,18 @@ public class Tile : MonoBehaviour
 		}
 
 		m_pPellet.gameObject.SetActive(true);
-		m_pPellet.InitPellet(m_eTileType == ETileType.SUPER_PELLET);
+		m_pPellet.transform.localScale = Vector3.one * (m_eTileType == ETileType.SUPER_PELLET ? m_fSuperPelletScale : m_fRegularPelletScale);
+	}
+
+	public void SetConnectedPortal(Tile pTile)
+	{
+		m_pConnectedPortal = pTile;
+	}
+
+	public Vector3 GetWarpPosition()
+	{
+		Assert.IsTrue(m_pConnectedPortal != null, "Someone tried to get a warp position from a tile which is a " + m_eTileType + " that has no connected portal");
+		return m_pConnectedPortal.transform.position;
 	}
 
 	public bool IsAdjacentTo(Tile pTile)
