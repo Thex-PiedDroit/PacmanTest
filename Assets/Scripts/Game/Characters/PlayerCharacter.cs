@@ -46,10 +46,9 @@ public class PlayerCharacter : MonoBehaviour
 			m_fLastFrameMovementOvershoot = (tMoveThisFrame - tMeToDestination).magnitude;
 
 			if (m_pCurrentTileTarget.TileType == ETileType.WARP)
-				transform.position = m_pCurrentTileTarget.GetWarpPosition();
-			else
-				transform.position = m_pCurrentTileTarget.transform.position;
+				m_pCurrentTileTarget = m_pCurrentTileTarget.GetWarpDestinationTile();	// Act as if this was the one we were going to already, for further computations
 
+			transform.position = m_pCurrentTileTarget.transform.position;
 			AcquireNextTileTargetInCurrentDirection();
 		}
 		else

@@ -63,10 +63,10 @@ public class Tile : MonoBehaviour
 		m_pConnectedPortal = pTile;
 	}
 
-	public Vector3 GetWarpPosition()
+	public Tile GetWarpDestinationTile()
 	{
 		Assert.IsTrue(m_pConnectedPortal != null, "Someone tried to get a warp position from a tile which is a " + m_eTileType + " that has no connected portal");
-		return m_pConnectedPortal.transform.position;
+		return m_pConnectedPortal;
 	}
 
 	public bool IsAdjacentTo(Tile pTile)
