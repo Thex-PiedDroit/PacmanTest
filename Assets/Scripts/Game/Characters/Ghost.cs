@@ -58,7 +58,7 @@ public class Ghost : MonoBehaviour
 
 	public void KillGhost()
 	{
-		m_bAlive = false;
+		SetDead();
 		OnDeath?.Invoke();
 	}
 
