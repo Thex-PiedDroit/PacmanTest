@@ -13,7 +13,6 @@ public class MapManager : MonoBehaviour
 
 	static public MapManager Instance = null;
 
-	public string m_sMapFileName = "Map1";
 	public float m_fTilesSize = 1.0f;
 
 	public Tile m_pTilePrefab = null;
@@ -44,19 +43,14 @@ public class MapManager : MonoBehaviour
 			return;
 	}
 
-	private void Start()
+	public void LoadMap(string sMapName)
 	{
-		GenerateTiles();
-	}
-
-	public void GenerateTiles()
-	{
+		List<char> pTilesTypes = ExtractMapDataFromString(sMapName);
 		HideExcessTiles();
 
 		m_pUnconnectedPortal = null;
 		m_iPlacedPortalVisuals = 0;
 
-		List<char> pTilesTypes = ExtractMapDataFromString();
 
 		m_pGround.transform.localScale = new Vector3(m_iGridSizeX, m_pGround.transform.localScale.y, m_iGridSizeY);
 
@@ -111,11 +105,11 @@ public class MapManager : MonoBehaviour
 		}
 	}
 
-	private List<char> ExtractMapDataFromString()
+	private List<char> ExtractMapDataFromString(string sMapName)
 	{
 		List<char> pTilesTypes = null;
 
-		StreamReader pStreamReader = new StreamReader(Application.streamingAssetsPath + "/Maps/" + m_sMapFileName + ".txt");
+		StreamReader pStreamReader = new StreamReader(Application.streamingAssetsPath + "/Maps/" + sMapName + ".txt");
 
 		using (pStreamReader)
 		{
@@ -162,10 +156,12 @@ public class MapManager : MonoBehaviour
 				InitPortal(pTile);
 				break;
 			case ETileType.PACMAN_SPAWNER:
-				PlayerCharacter.Instance.SetSpawnTile(pTile);
+				GameManager.Instance.SetPlayerSpawnTile(pTile);
+				break;
+			case ETileType.GHOST_SPAWNER:
+				GameManager.Instance.AddGhostSpawnTile(pTile);
 				break;
 		}
-			
 	}
 
 	private void InitPortal(Tile pTile)
@@ -183,6 +179,12 @@ public class MapManager : MonoBehaviour
 
 		m_pPortalVisuals[m_iPlacedPortalVisuals].position = pTile.transform.position;
 		++m_iPlacedPortalVisuals;
+	}
+
+	public void ResetTilesWithCurrentMap()
+	{
+		for (int i = 0; i < m_pTiles.Count; ++i)
+			m_pTiles[i].InitPellet();
 	}
 
 	public Tile GetTileFromPosition(float fPosX, float fPosZ)

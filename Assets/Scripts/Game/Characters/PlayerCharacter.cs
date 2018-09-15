@@ -1,4 +1,5 @@
 ﻿
+using System;
 using UnityEngine;
 
 
@@ -7,6 +8,9 @@ public class PlayerCharacter : MonoBehaviour
 #region Variables (public)
 
 	static public PlayerCharacter Instance = null;
+
+
+	public Action OnDeath = null;
 
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
 
@@ -23,6 +27,9 @@ public class PlayerCharacter : MonoBehaviour
 												// This system makes it possible to gracefully handle diagonal inputs while keeping movements non-diagonal. In other words: more complicated in order to feel better
 	private float m_fLastFrameMovementOvershoot = 0.0f;
 
+	private bool m_bAlive = false;
+	private bool m_bHasntStartedMovingYet = false;
+
 	#endregion
 
 
@@ -36,10 +43,16 @@ public class PlayerCharacter : MonoBehaviour
 
 	private void Update()
 	{
+		if (!m_bAlive)
+			return;
+
 		m_pPlayerCharacterBehaviour.UpdateCharacterTileTargets(this);
 
 		if (m_pCurrentTileTarget != null)
+		{
 			MoveTowardsCurrentTileTarget();
+			m_bHasntStartedMovingYet = false;
+		}
 	}
 
 	private void MoveTowardsCurrentTileTarget()
@@ -126,9 +139,20 @@ public class PlayerCharacter : MonoBehaviour
 
 #region Setters
 
-	public void SetSpawnTile(Tile pTile)
+	public void MakePlayerAlive()
 	{
-		transform.position = pTile.transform.position;
+		m_bAlive = true;
+		m_bHasntStartedMovingYet = true;
+	}
+
+	public void KillPlayer()
+	{
+		m_bAlive = false;
+		m_pCurrentTileTarget = null;
+		m_pInputsTileTarget = null;
+		m_pPickupsModule.ResetVariables();
+
+		OnDeath?.Invoke();
 	}
 
 	public void SetCurrentTileTarget(Tile pTile)
@@ -178,6 +202,11 @@ public class PlayerCharacter : MonoBehaviour
 	public Vector3 GetCurrentTargetPosition()
 	{
 		return m_pCurrentTileTarget?.transform.position ?? transform.position;
+	}
+
+	public bool HasntStartedMovingYet()
+	{
+		return m_bHasntStartedMovingYet;
 	}
 
 	#endregion

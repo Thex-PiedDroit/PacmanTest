@@ -17,7 +17,7 @@ public class PlayerCharacterBehaviour : ScriptableObject
 			return;
 		}
 
-		if (tMoveDirection == -tCurrentCharacterForward)	// "Abort current tile target, go back (therefore, directly set a new target)
+		if (tMoveDirection == -tCurrentCharacterForward || pCharacter.HasntStartedMovingYet())	// "Abort current tile target, go back (therefore, directly set a new target)
 		{
 			Tile pNextTileInDirection = FindWalkableTileInDirection(tMoveDirection, pCharacter.transform.position - (tMoveDirection * 0.5f));  // Raycast from a bit behind the character to find the one under him if he just got passed its middle but didn't leave it yet
 

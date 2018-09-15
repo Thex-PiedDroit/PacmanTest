@@ -16,5 +16,6 @@ abstract public class GhostBehaviour : ScriptableObject
 		pGhost.m_pNavMeshAgent.speed = pGhost.m_fRegularSpeed;
 	}
 
+	abstract public void ResetGhostBehaviour(Ghost pGhost);
 	abstract public void UpdateGhostBehaviour(Ghost pGhost);
 }

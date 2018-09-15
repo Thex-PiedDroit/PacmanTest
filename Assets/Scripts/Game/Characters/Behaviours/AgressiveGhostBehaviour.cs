@@ -24,6 +24,11 @@ public class AgressiveGhostBehaviour : GhostBehaviour
 	{
 		base.InitBehaviour(pGhost);
 
+		ResetGhostBehaviour(pGhost);
+	}
+
+	override public void ResetGhostBehaviour(Ghost pGhost)
+	{
 		pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_iPelletsCollectedByPlayerAtBehaviourStart, PlayerCharacter.Instance.m_pPickupsModule.GetCurrentPelletsCount());
 		pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_bIsEnraged, false);
 	}

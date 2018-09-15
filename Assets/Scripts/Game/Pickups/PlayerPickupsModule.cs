@@ -53,6 +53,11 @@ public class PlayerPickupsModule : CharacterProceduralVariablesModule
 		return m_iCollectedPellets;
 	}
 
+	public void ResetCollectedPellets()
+	{
+		m_iCollectedPellets = 0;
+	}
+
 	public void ResetScores()
 	{
 		m_iGamePoints = 0;

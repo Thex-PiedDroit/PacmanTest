@@ -49,7 +49,7 @@ public class CharacterProceduralVariablesModule : MonoBehaviour
 			m_pProceduralVariables[sVariableName] = null;
 	}
 
-	private void ResetVariables()
+	public void ResetVariables()
 	{
 		m_pProceduralVariables.Clear();
 	}
