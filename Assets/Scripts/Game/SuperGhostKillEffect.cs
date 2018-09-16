@@ -10,6 +10,11 @@ public class SuperGhostKillEffect : ScriptableObject
 {
 #region Variables (public)
 
+	public float m_fCameraZoomChange = 8.0f;
+	public float m_fCameraZoomDuration = 1.5f;
+	public float m_fCameraZoomCurveStretch = 8.0f;
+
+	[Space()]
 	public float m_fFreezeFrameDuration = 0.1f;
 	public float m_fDelayBetweenCameraZoomAndFreezeFrame = 0.2f;
 
@@ -37,6 +42,21 @@ public class SuperGhostKillEffect : ScriptableObject
 		if (m_bDoingEffects)
 			return;     // Don't handle this yet. Might add it later though
 
+		PlayerCharacter.Instance.StartCoroutine(TriggerEffects(pGhost));
+	}
+
+	private IEnumerator TriggerEffects(Ghost pGhost)
+	{
+		m_bDoingEffects = true;
+
+		JuiceManager.Instance.ZoomCameraForOneSecond(pGhost.transform.position, m_fCameraZoomChange, m_fCameraZoomDuration, m_fCameraZoomCurveStretch);
+
+		float fStartTime = Time.time;
+		while (Time.time - fStartTime < m_fDelayBetweenCameraZoomAndFreezeFrame)
+			yield return false;
+
 		JuiceManager.Instance.FreezeFrame(m_fFreezeFrameDuration);
+
+		m_bDoingEffects = false;
 	}
 }

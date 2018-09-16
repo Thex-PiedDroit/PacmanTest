@@ -11,4 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4e3aa072ba6039468af5b2a58f52fb5, type: 3}
   m_Name: SuperGhostKillEffect
   m_EditorClassIdentifier: 
+  m_fCameraZoomChange: 5
+  m_fCameraZoomDuration: 1.5
+  m_fCameraZoomCurveStretch: 8
   m_fFreezeFrameDuration: 0.6
+  m_fDelayBetweenCameraZoomAndFreezeFrame: 0.03
