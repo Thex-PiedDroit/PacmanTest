@@ -56,6 +56,7 @@ GameObject:
   - component: {fileID: 114527227207322576}
   - component: {fileID: 114825896971917340}
   - component: {fileID: 135158830439173354}
+  - component: {fileID: 135497255556915974}
   - component: {fileID: 208844703910428566}
   m_Layer: 30
   m_Name: Pacman
@@ -224,6 +225,18 @@ SphereCollider:
   m_GameObject: {fileID: 1706911192636610}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0.75, z: 0}
+--- !u!135 &135497255556915974
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1706911192636610}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
