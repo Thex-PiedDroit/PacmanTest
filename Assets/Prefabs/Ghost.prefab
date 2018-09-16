@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 114519521247496918}
   - component: {fileID: 114587349206845806}
   - component: {fileID: 136287876946572940}
+  - component: {fileID: 136415125781741130}
   - component: {fileID: 195387882101981970}
   - component: {fileID: 54196863773965936}
   m_Layer: 31
@@ -219,6 +220,8 @@ MonoBehaviour:
   m_pNavMeshAgent: {fileID: 195387882101981970}
   m_pMeshFilter: {fileID: 33429830426028096}
   m_pProceduralVariablesModule: {fileID: 114587349206845806}
+  m_pRigidbody: {fileID: 54196863773965936}
+  m_tDeadColorMultiplier: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_pBehaviour: {fileID: 0}
   m_fRegularSpeed: 4.8
 --- !u!114 &114587349206845806
@@ -240,6 +243,19 @@ CapsuleCollider:
   m_GameObject: {fileID: 1473692359259078}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!136 &136415125781741130
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1473692359259078}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2

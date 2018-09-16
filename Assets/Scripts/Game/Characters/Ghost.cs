@@ -18,6 +18,9 @@ public class Ghost : MonoBehaviour
 	public MeshFilter m_pMeshFilter = null;
 	public CharacterProceduralVariablesModule m_pProceduralVariablesModule = null;
 
+	public Rigidbody m_pRigidbody = null;
+	public Color m_tDeadColorMultiplier = Color.grey;
+
 	public GhostBehaviour m_pBehaviour = null;
 
 	public float m_fRegularSpeed = 4.8f;
@@ -31,6 +34,7 @@ public class Ghost : MonoBehaviour
 	private Color m_tCurrentColor = Color.white;
 
 	private bool m_bAlive = false;
+	private bool m_bRagdollActive = false;
 
 	#endregion
 
@@ -49,6 +53,9 @@ public class Ghost : MonoBehaviour
 
 	public void SetGhostColor(Color tGhostColor)
 	{
+		if (m_bRagdollActive)
+			tGhostColor *= m_tDeadColorMultiplier;
+
 		if (tGhostColor == m_tCurrentColor)
 			return;
 
@@ -71,6 +78,7 @@ public class Ghost : MonoBehaviour
 	public void KillGhost()
 	{
 		SetDead();
+		SetRagdollModeActivated(true);
 		OnDeath?.Invoke(this);
 	}
 
@@ -85,6 +93,9 @@ public class Ghost : MonoBehaviour
 
 	public void SetAlive()
 	{
+		SetRagdollModeActivated(false);
+		SetGhostColor(m_pBehaviour.m_tGhostColor);
+
 		m_bAlive = true;
 		transform.position = m_pSpawnTile.transform.position;
 
@@ -97,9 +108,20 @@ public class Ghost : MonoBehaviour
 		m_pSpawnTile = pTile;
 	}
 
+	private void SetRagdollModeActivated(bool bActivated)
+	{
+		m_bRagdollActive = bActivated;
+
+		m_pRigidbody.isKinematic = !bActivated;
+		m_pRigidbody.useGravity = bActivated;
+
+		if (!bActivated)
+			transform.rotation = Quaternion.identity;
+	}
+
 	private void OnTriggerEnter(Collider pOther)
 	{
-		if (!m_bAlive)
+		if (!m_bAlive || pOther.gameObject.layer == LayerMask.NameToLayer("Ground") || pOther.gameObject.layer == LayerMask.NameToLayer("Wall"))
 			return;
 
 		PlayerCharacter pPlayer = pOther.GetComponent<PlayerCharacter>();
