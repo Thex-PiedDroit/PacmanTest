@@ -162,7 +162,7 @@ public class MapManager : MonoBehaviour
 				GameManager.Instance.SetPlayerSpawnTile(pTile);
 				break;
 			case ETileType.GHOST_SPAWNER:
-				GameManager.Instance.AddGhostSpawnTile(pTile);
+				GhostsManager.Instance.AddGhostSpawnTile(pTile);
 				break;
 		}
 	}

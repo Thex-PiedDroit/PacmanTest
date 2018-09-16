@@ -13011,7 +13011,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 445631489}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &408349277
 MonoBehaviour:
@@ -13831,6 +13831,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1126733598}
+  - {fileID: 1815654813}
   - {fileID: 408349276}
   - {fileID: 1530790254}
   m_Father: {fileID: 0}
@@ -31265,16 +31266,7 @@ MonoBehaviour:
   m_pGameModeData: {fileID: 11400000, guid: ccf1ad6e156aac64e8e03d6a603077bb, type: 2}
   m_pPlayerCharacterPrefab: {fileID: 114527227207322576, guid: 7d07ca1d17b679645b2c18d8cea7fda3,
     type: 2}
-  m_pGhostsPrefab: {fileID: 114519521247496918, guid: 107b6e019d34bfc4bbfd2b4bf07207ed,
-    type: 2}
   m_pPlayerCharacterContainer: {fileID: 38194856}
-  m_pGhostsContainer: {fileID: 716642629}
-  m_pFleeGhostBehaviour: {fileID: 11400000, guid: c2ceaf9fa4c8dcd419842d393537b701,
-    type: 2}
-  m_pGhostsBehaviours:
-  - {fileID: 11400000, guid: d5c438e74c228234eb4415d1d7431722, type: 2}
-  - {fileID: 11400000, guid: 568493cc4b765a048b69d1354f1d225d, type: 2}
-  - {fileID: 11400000, guid: 74cdfcb1a66692a4eac974a5b6f91d7f, type: 2}
 --- !u!1001 &1130568407
 Prefab:
   m_ObjectHideFlags: 0
@@ -42519,7 +42511,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 445631489}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1530790255
 MonoBehaviour:
@@ -50304,6 +50296,55 @@ CanvasRenderer:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1812233522}
   m_CullTransparentMesh: 0
+--- !u!1 &1815654812
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1815654813}
+  - component: {fileID: 1815654814}
+  m_Layer: 0
+  m_Name: GhostsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1815654813
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1815654812}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 445631489}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1815654814
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1815654812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 976ecb269d089b04980d1d7a6863cb59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_pGhostsPrefab: {fileID: 114519521247496918, guid: 107b6e019d34bfc4bbfd2b4bf07207ed,
+    type: 2}
+  m_pGhostsContainer: {fileID: 716642629}
+  m_pFleeGhostBehaviour: {fileID: 11400000, guid: c2ceaf9fa4c8dcd419842d393537b701,
+    type: 2}
+  m_pGhostsBehaviours:
+  - {fileID: 11400000, guid: d5c438e74c228234eb4415d1d7431722, type: 2}
+  - {fileID: 11400000, guid: 74cdfcb1a66692a4eac974a5b6f91d7f, type: 2}
+  - {fileID: 11400000, guid: 568493cc4b765a048b69d1354f1d225d, type: 2}
 --- !u!1001 &1817207177
 Prefab:
   m_ObjectHideFlags: 0
