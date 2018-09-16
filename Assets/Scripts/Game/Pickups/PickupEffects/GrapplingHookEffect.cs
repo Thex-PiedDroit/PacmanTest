@@ -31,6 +31,11 @@ public class GrapplingHookEffect : PickupEffect
 	private const string c_sVariableName_fGrapplingHookHookingTime = "fGrapplingHookHookingTime";
 	private const string c_sVariableName_bGrapplingHookHitWall = "bGrapplingHookHitWall";
 
+	private const string c_sVariableName_bGrapplingHookAborted = "bGrapplingHookAborted";
+
+
+	private const float c_fMaxRaycastDistance = 20.0f;
+
 	#endregion
 
 
@@ -48,12 +53,18 @@ public class GrapplingHookEffect : PickupEffect
 	private void ResetVariables(PlayerPickupsModule pPickupsModule)
 	{
 		pPickupsModule.ResetVariable(c_sVariableName_fGrapplingHookUseTime);
-		pPickupsModule.ResetVariable(c_sVariableName_tGrapplingHookTractionDestination);   // TODO: At some point, should make sure the head is destroyed before removing the reference here
+		pPickupsModule.ResetVariable(c_sVariableName_tGrapplingHookTractionDestination);
+		pPickupsModule.ResetVariable(c_sVariableName_pGrapplingHookObject);
 		pPickupsModule.ResetVariable(c_sVariableName_fGrapplingHookHookingTime);
+		pPickupsModule.ResetVariable(c_sVariableName_bGrapplingHookHitWall);
+		pPickupsModule.ResetVariable(c_sVariableName_bGrapplingHookAborted);
 	}
 
 	override public void UpdateEffect(PlayerPickupsModule pPickupsModule)
 	{
+		if (pPickupsModule.GetVariableAsBool(c_sVariableName_bGrapplingHookAborted))
+			ResetVariablesAfterAbort(pPickupsModule);
+
 		float fUseTime = (float)(pPickupsModule.GetVariable(c_sVariableName_fGrapplingHookUseTime, 0.0f));
 
 		if (fUseTime != 0.0f)
@@ -102,8 +113,6 @@ public class GrapplingHookEffect : PickupEffect
 
 	private Vector3 ShootHookForward(PlayerPickupsModule pPickupsModule, Vector3 tDirection)
 	{
-		const float c_fMaxRaycastDistance = 20.0f;
-
 		RaycastHit tHit;
 		if (!Physics.Raycast(pPickupsModule.m_pMaster.transform.position + (Vector3.up * 0.5f), tDirection, out tHit, c_fMaxRaycastDistance, LayerMask.GetMask("Wall", "Ghost"), QueryTriggerInteraction.Collide))
 			return Vector3.down;
@@ -142,8 +151,27 @@ public class GrapplingHookEffect : PickupEffect
 
 	private void AbortShot(PlayerPickupsModule pPickupsModule)
 	{
-		// TODO: Implement this
-		EffectEnd(pPickupsModule);
+		pPickupsModule.SetVariable(c_sVariableName_bGrapplingHookAborted, true);
+
+		PlayerCharacter pPlayer = pPickupsModule.m_pMaster;
+		PinHookToDestination(pPlayer, pPlayer.transform.position + (pPlayer.transform.forward * c_fMaxRaycastDistance));	// Just show the hook for a frame, for visual feedback on why it's got aborted
+	}
+
+	private void ResetVariablesAfterAbort(PlayerPickupsModule pPickupsModule)
+	{
+		GrapplingHook pHook = (GrapplingHook)(pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
+		pHook.m_pRopeEnd.SetParent(pHook.m_pRopeObject.transform);
+		pHook.m_pRopeEnd.localPosition = Vector3.zero;
+		pHook.m_pRopeObject.SetActive(false);
+
+		pPickupsModule.m_pMaster.m_pInventorySlotsModule.EquipItemInSlot(pHook.transform, EInventorySlot.BELT, false);
+		pHook.transform.localPosition = m_pHookPrefab.transform.localPosition;
+		pHook.transform.localRotation = m_pHookPrefab.transform.localRotation;
+
+		ResetVariables(pPickupsModule);
+		pPickupsModule.SetVariable(c_sVariableName_pGrapplingHookObject, pHook);
+
+		pPickupsModule.m_pMaster.SetBehaviourFrozen(false);
 	}
 
 	private void InitTraction(PlayerPickupsModule pPickupsModule, Vector3 tHookDestination)

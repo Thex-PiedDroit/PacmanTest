@@ -47,8 +47,7 @@ public class CharacterProceduralVariablesModule : MonoBehaviour
 
 	public void ResetVariable(string sVariableName)
 	{
-		if (m_pProceduralVariables.ContainsKey(sVariableName))
-			m_pProceduralVariables[sVariableName] = null;
+		m_pProceduralVariables.Remove(sVariableName);
 	}
 
 	public void ResetAllVariables()
