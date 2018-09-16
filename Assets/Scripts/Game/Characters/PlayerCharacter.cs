@@ -16,6 +16,7 @@ public class PlayerCharacter : MonoBehaviour
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
 
 	public PlayerPickupsModule m_pPickupsModule = null;
+	public PlayerCharacterInventorySlotsModule m_pInventorySlotsModule = null;
 	public NavMeshObstacle m_pNavMeshObstacle = null;
 
 	public float m_fMoveSpeed = 5.0f;
@@ -36,6 +37,8 @@ public class PlayerCharacter : MonoBehaviour
 	private bool m_bAlive = false;
 	private bool m_bHasntStartedMovingYet = false;
 
+	private bool m_bBehaviourFrozen = false;
+
 	#endregion
 
 
@@ -49,7 +52,7 @@ public class PlayerCharacter : MonoBehaviour
 
 	private void Update()
 	{
-		if (!m_bAlive)
+		if (!m_bAlive || m_bBehaviourFrozen)
 			return;
 
 		m_pPlayerCharacterBehaviour.UpdateCharacterTileTargets(this);
@@ -165,6 +168,11 @@ public class PlayerCharacter : MonoBehaviour
 		m_pPickupsModule.ResetAllVariables();
 	}
 
+	public void SetBehaviourFrozen(bool bFrozen)
+	{
+		m_bBehaviourFrozen = bFrozen;
+	}
+
 	public void TeleportToSpawn()
 	{
 		transform.position = m_pSpawnTile.transform.position;
@@ -180,9 +188,14 @@ public class PlayerCharacter : MonoBehaviour
 		m_pCurrentTileTarget = pTile;
 
 		if (pTile != null && pTile.transform.position != transform.position)
+		{
 			transform.forward = (pTile.transform.position - transform.position).normalized;
+		}
 		else
+		{
 			m_fLastFrameMovementOvershoot = 0.0f;
+			m_bHasntStartedMovingYet = true;
+		}
 	}
 
 	public void SetInputsTileTarget(Tile pTile)

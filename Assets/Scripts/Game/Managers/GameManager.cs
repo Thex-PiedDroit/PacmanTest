@@ -27,6 +27,8 @@ public class GameManager : MonoBehaviour
 
 	private int m_iCurrentPlayerLives = 0;
 
+	private bool m_bGameIsPlaying = false;
+
 	#endregion
 
 
@@ -70,11 +72,18 @@ public class GameManager : MonoBehaviour
 			// TODO: Game start countdown here
 		PlayerCharacter.Instance.MakePlayerAlive();
 		GhostsManager.Instance.ReleaseNextGhostNow();
+
+		m_bGameIsPlaying = true;
 	}
 
 	public void QuitGame()
 	{
 		Application.Quit();	// TODO: Add "Are you sure?" dialog
+	}
+
+	public bool IsGamePlaying()
+	{
+		return m_bGameIsPlaying;
 	}
 
 	private void SpawnPlayerCharacter()
@@ -105,12 +114,16 @@ public class GameManager : MonoBehaviour
 
 	private void GameOver()
 	{
+		m_bGameIsPlaying = false;
+
 		GhostsManager.Instance.SetAllGhostsDead();
 		EndGameScreenManager.Instance.DisplayEndGameScreen();
 	}
 
 	public void WinGame()
 	{
+		m_bGameIsPlaying = false;
+
 		PlayerCharacter.Instance.ResetPlayer();
 		MapManager.Instance.ResetTilesWithCurrentMap();
 		LaunchGame();
