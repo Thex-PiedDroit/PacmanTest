@@ -46,7 +46,10 @@ public class MapManager : MonoBehaviour
 
 	public void LoadMap(string sMapName)
 	{
-		List<char> pTilesTypes = ExtractMapDataFromString(sMapName);
+		List<char> pTilesTypes;
+		if (!ExtractMapDataFromString(sMapName, out pTilesTypes))
+			return;
+
 		HideExcessTiles();
 		ScoresManager.Instance.ResetPelletsCountInMap();
 
@@ -92,7 +95,12 @@ public class MapManager : MonoBehaviour
 
 			pCurrentTile.transform.localPosition = new Vector3(fPosX, 0.0f, fPosY);
 
-			InitTileWithType(pCurrentTile, (ETileType)pTilesTypes[i]);
+			ETileType eTileType = (ETileType)pTilesTypes[i];
+
+			if (!Tile.IsTileTypeValid(eTileType))
+				DisplayParsingError("A tile in the map file " + sMapName + " has an unrecognized type (" + pTilesTypes[i] + "). Please fix this.");
+
+			InitTileWithType(pCurrentTile, eTileType);
 		}
 	}
 
@@ -106,9 +114,9 @@ public class MapManager : MonoBehaviour
 		}
 	}
 
-	private List<char> ExtractMapDataFromString(string sMapName)
+	private bool ExtractMapDataFromString(string sMapName, out List<char> pTilesTypes)
 	{
-		List<char> pTilesTypes = null;
+		pTilesTypes = null;
 
 		StreamReader pStreamReader = new StreamReader(Application.streamingAssetsPath + "/Maps/" + sMapName + ".txt");
 
@@ -117,19 +125,21 @@ public class MapManager : MonoBehaviour
 			string sLine = pStreamReader.ReadLine();
 			if (!sLine.StartsWith("x=") || !int.TryParse(sLine.Substring(2), out m_iGridSizeX))
 			{
-				// Error
-				return null;
+				DisplayParsingError("The map file " + sMapName + " has errors in it. The first line should be \"x=\" followed by the map size along the X axis. Please fix this.");
+				return false;
 			}
 
 			sLine = pStreamReader.ReadLine();
 			if (!sLine.StartsWith("y=") || !int.TryParse(sLine.Substring(2), out m_iGridSizeY))
 			{
-				// Error
-				return null;
+				DisplayParsingError("The map file " + sMapName + " has errors in it. The second line should be \"y=\" followed by the map size along the Y axis. Please fix this.");
+				return false;
 			}
 
 
-			pTilesTypes = new List<char>(m_iGridSizeX * m_iGridSizeY);
+			int iMapTotalSize = m_iGridSizeX * m_iGridSizeY;
+
+			pTilesTypes = new List<char>(iMapTotalSize);
 			char[] cCurrentChar = new char[1];
 
 			while (!pStreamReader.EndOfStream)
@@ -139,9 +149,23 @@ public class MapManager : MonoBehaviour
 				if (!char.IsControl(cCurrentChar[0]))
 					pTilesTypes.Add(cCurrentChar[0]);
 			}
+
+
+			if (pTilesTypes.Count != iMapTotalSize)
+			{
+				DisplayParsingError("The map file " + sMapName + " has errors in it. There are not the same amount of tiles as deduced from the map size. Please fix this.");
+				pTilesTypes = null;
+
+				return false;
+			}
 		}
 
-		return pTilesTypes;
+		return true;
+	}
+
+	private void DisplayParsingError(string sErrorText)
+	{
+		Toolkit.DisplayImportantErrorMessage("Map file parsing error", sErrorText);
 	}
 
 	private void InitTileWithType(Tile pTile, ETileType eTileType)

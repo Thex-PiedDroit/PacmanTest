@@ -93,4 +93,26 @@ public class Tile : MonoBehaviour
 
 		return bIsWalkable;
 	}
+
+
+	static public bool IsTileTypeValid(ETileType eTileType)
+	{
+		bool bValid = false;
+
+		switch (eTileType)
+		{
+			case ETileType.WALL:
+			case ETileType.PELLET:
+			case ETileType.SUPER_PELLET:
+			case ETileType.WARP:
+			case ETileType.GHOST_DOOR:
+			case ETileType.GHOST_SPAWNER:
+			case ETileType.PACMAN_SPAWNER:
+			case ETileType.EMPTY:
+				bValid = true;
+				break;
+		}
+
+		return bValid;
+	}
 }
