@@ -27,6 +27,9 @@ public class CharacterProceduralVariablesModule : MonoBehaviour
 		m_pProceduralVariables = new Dictionary<string, object>();
 	}
 
+	/// <summary>
+	/// By dictionary access, no iteration
+	/// </summary>
 	public object GetVariable(string sVariableName, object pDefaultValue = null)
 	{
 		return m_pProceduralVariables.ContainsKey(sVariableName) ? m_pProceduralVariables[sVariableName] : pDefaultValue;

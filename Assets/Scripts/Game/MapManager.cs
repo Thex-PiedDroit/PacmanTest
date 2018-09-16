@@ -210,28 +210,28 @@ public class MapManager : MonoBehaviour
 		return (iTileIndex >= 0 && iTileIndex < m_pTiles.Count) ? m_pTiles[iTileIndex] : null;
 	}
 
-	public Tile GetAdjacentTileFurtherFromPosition(Vector3 tPosToAvoid, Vector3 tCurrentPos)
+	public Tile GetAdjacentTileFurtherFromPosition(Vector3 tPosToAvoid, Tile pCurrentTile, Tile pExcludedTile)
 	{
-		Tile pCurrentTile = GetTileFromPosition(tCurrentPos);
+		Vector3 tCurrentPos = pCurrentTile.transform.position;
 
 		/*		Check directly in opposite direction fist		*/
 		Vector3 tOppositeDirection = FlattenDirectionOnOneAxis(tCurrentPos - tPosToAvoid);
-		Tile pTileFurther = GetWalkableTileInDirection(tOppositeDirection, pCurrentTile.transform.position);
+		Tile pTileFurther = GetWalkableTileInDirection(tOppositeDirection, tCurrentPos);
 
-		if (pTileFurther != null && pTileFurther.IsWalkable())
+		if (pTileFurther != null && pTileFurther != pExcludedTile && pTileFurther.IsWalkable())
 			return pTileFurther;
 
 
-		/*		Then check both left and right and return the nearest one		*/
+		/*		Then check both left and right and return the nearest one (or none if to exclude)		*/
 		Vector3 tLeftDirection = tOppositeDirection.Rotate90AroundY();
 		Vector3 tRightDirection = -tLeftDirection;
 
-		Tile pLeftTile = GetWalkableTileInDirection(tLeftDirection, pCurrentTile.transform.position);
-		if (pLeftTile == null || !pLeftTile.IsWalkable())
+		Tile pLeftTile = GetWalkableTileInDirection(tLeftDirection, tCurrentPos);
+		if (pLeftTile == null || pLeftTile == pExcludedTile || !pLeftTile.IsWalkable())
 			pLeftTile = null;
 
-		Tile pRightTile = GetWalkableTileInDirection(tRightDirection, pCurrentTile.transform.position);
-		if (pRightTile == null || !pRightTile.IsWalkable())
+		Tile pRightTile = GetWalkableTileInDirection(tRightDirection, tCurrentPos);
+		if (pRightTile == null || pRightTile == pExcludedTile || !pRightTile.IsWalkable())
 			pRightTile = null;
 
 		/*		Check if one clear winner		*/
