@@ -22,11 +22,12 @@ public class GameModeData : ScriptableObject
 
 	#endregion
 
-#region Map
+#region Game
 
 	[Space()]
-	[Header("Map")]
+	[Header("Game")]
 	public string m_sDefaultMapName = "Map1";
+	public int m_iBeforeStartCountDownDurationInSeconds = 3;
 
 	#endregion
 }

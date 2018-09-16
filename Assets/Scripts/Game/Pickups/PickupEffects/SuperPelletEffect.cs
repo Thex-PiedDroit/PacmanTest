@@ -44,7 +44,7 @@ public class SuperPelletEffect : PickupEffect
 			EffectEnd(pPickupsModule);
 	}
 
-	override protected void EffectEnd(PlayerPickupsModule pPickupsModule)
+	override public void EffectEnd(PlayerPickupsModule pPickupsModule)
 	{
 		GhostsManager.Instance.ResetGhostsToNormalBehaviour();
 		pPickupsModule.RemoveActiveEffect(this);

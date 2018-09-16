@@ -23,6 +23,9 @@ public class Ghost : MonoBehaviour
 
 	public GhostBehaviour m_pBehaviour = null;
 
+	public string m_sAliveLayerName = "Ghost";
+	public string m_sDeadLayerName = "DeadGhost";
+
 	public float m_fRegularSpeed = 4.8f;
 
 	#endregion
@@ -118,6 +121,8 @@ public class Ghost : MonoBehaviour
 
 		m_pRigidbody.isKinematic = !bActivated;
 		m_pRigidbody.useGravity = bActivated;
+
+		gameObject.layer = LayerMask.NameToLayer(bActivated ? m_sDeadLayerName : m_sAliveLayerName);
 
 		if (!bActivated)
 			transform.rotation = Quaternion.identity;

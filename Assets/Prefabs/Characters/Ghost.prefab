@@ -223,6 +223,8 @@ MonoBehaviour:
   m_pRigidbody: {fileID: 54196863773965936}
   m_tDeadColorMultiplier: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_pBehaviour: {fileID: 0}
+  m_sAliveLayerName: Ghost
+  m_sDeadLayerName: DeadGhost
   m_fRegularSpeed: 4.8
 --- !u!114 &114587349206845806
 MonoBehaviour:
