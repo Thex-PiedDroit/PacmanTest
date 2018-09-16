@@ -14,6 +14,8 @@ public class SuperGhostKillEffect : ScriptableObject
 	public float m_fCameraZoomDuration = 1.5f;
 	public float m_fCameraZoomCurveStretch = 8.0f;
 
+	public bool m_bShowSpriteBehindGhostWhileZooming = true;
+
 	[Space()]
 	public float m_fFreezeFrameDuration = 0.1f;
 	public float m_fDelayBetweenCameraZoomAndFreezeFrame = 0.2f;
@@ -49,7 +51,7 @@ public class SuperGhostKillEffect : ScriptableObject
 	{
 		m_bDoingEffects = true;
 
-		JuiceManager.Instance.ZoomCameraForOneSecond(pGhost.transform.position, m_fCameraZoomChange, m_fCameraZoomDuration, m_fCameraZoomCurveStretch);
+		JuiceManager.Instance.ZoomCameraForOneSecond(pGhost.transform, m_fCameraZoomChange, m_fCameraZoomDuration, m_fCameraZoomCurveStretch, m_bShowSpriteBehindGhostWhileZooming);
 
 		float fStartTime = Time.time;
 		while (Time.time - fStartTime < m_fDelayBetweenCameraZoomAndFreezeFrame)

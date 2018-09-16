@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 
 
+// The code is kind of a mess here.. sacrificed cleanness for results for the very last hours of work in here
+
 public class JuiceManager : MonoBehaviour
 {
 #region Variables (public)
@@ -11,6 +13,9 @@ public class JuiceManager : MonoBehaviour
 
 
 	public Camera m_pCamera = null;
+
+	public Transform m_pSpriteToShowBehindTargetWhenCameraZoom = null;
+	public float m_fSpriteRotationSpeedInDegreesPerSecond = 180.0f;
 
 	#endregion
 
@@ -58,29 +63,37 @@ public class JuiceManager : MonoBehaviour
 		m_bFreezingFrame = false;
 	}
 
-	public void ZoomCameraForOneSecond(Vector3 tTarget, float fZoomChange, float fDuration, float fImpulseStretch)
+	public void ZoomCameraForOneSecond(Transform pTarget, float fZoomChange, float fDuration, float fImpulseStretch, bool bShowSpriteBehindTarget = false)
 	{
 		if (m_pCameraZoomCoroutine != null)
 			StopCoroutine(m_pCameraZoomCoroutine);
 
-		m_pCameraZoomCoroutine = StartCoroutine(ZoomCameraOnTarget(tTarget, fZoomChange, fDuration, fImpulseStretch));
+		m_pCameraZoomCoroutine = StartCoroutine(ZoomCameraOnTarget(pTarget, fZoomChange, fDuration, fImpulseStretch, bShowSpriteBehindTarget));
 	}
 
-	private IEnumerator ZoomCameraOnTarget(Vector3 tTarget, float fZoomChange, float fDuration, float fImpulseStretch)
+	private IEnumerator ZoomCameraOnTarget(Transform pTarget, float fZoomChange, float fDuration, float fImpulseStretch, bool bShowSpriteBehindTarget)
 	{
 		float fStartTime = Time.time;
 		float fElapsed = 0.0f;
 
 		Vector3 tCameraPosAtStart = m_pCamera.transform.position;
+		Vector3 tTargetPosAtStart = pTarget.position;
+
+		if (bShowSpriteBehindTarget)
+			InitSpriteDisplay(pTarget);
+
 
 		while ((fElapsed = Time.time - fStartTime) < fDuration)
 		{
 			float fImpulse = Impulse(fElapsed, fImpulseStretch);
 			m_pCamera.orthographicSize = m_fDefaultCameraZoom - (fZoomChange * fImpulse);
 
-			Vector3 tPosThisFrame = tCameraPosAtStart + (tTarget * fImpulse);
+			Vector3 tPosThisFrame = tCameraPosAtStart + (tTargetPosAtStart * fImpulse);
 			tPosThisFrame.y = tCameraPosAtStart.y;
 			m_pCamera.transform.position = tPosThisFrame;
+
+			if (bShowSpriteBehindTarget)
+				UpdateSpriteDisplay(pTarget, tTargetPosAtStart, fImpulse);
 
 			yield return false;
 		}
@@ -88,7 +101,34 @@ public class JuiceManager : MonoBehaviour
 		m_pCamera.orthographicSize = m_fDefaultCameraZoom;
 		m_pCamera.transform.position = tCameraPosAtStart;
 
+		m_pSpriteToShowBehindTargetWhenCameraZoom.gameObject.SetActive(false);
+
 		m_pCameraZoomCoroutine = null;
+	}
+
+	private void InitSpriteDisplay(Transform pTarget)
+	{
+		m_pSpriteToShowBehindTargetWhenCameraZoom.gameObject.SetActive(true);
+
+		Vector3 tRandomSpriteRotation = m_pSpriteToShowBehindTargetWhenCameraZoom.localEulerAngles;
+		tRandomSpriteRotation.z = Random.Range(0.0f, 360.0f);
+		m_pSpriteToShowBehindTargetWhenCameraZoom.localEulerAngles = tRandomSpriteRotation;
+	}
+
+	private void UpdateSpriteDisplay(Transform pTarget, Vector3 tTargetPosAtStart, float fImpulse)
+	{
+		const float c_fHeightChange = 2.0f;     // Move ghost higher to correctly display sprite behind it
+		pTarget.position += (Vector3.up * c_fHeightChange);
+
+		m_pSpriteToShowBehindTargetWhenCameraZoom.position = pTarget.position + (Vector3.down * (c_fHeightChange * 0.5f));
+
+		Vector3 tNewScale = Vector3.one * fImpulse;
+		tNewScale.z = 1.0f;
+		m_pSpriteToShowBehindTargetWhenCameraZoom.localScale = tNewScale;
+
+		Vector3 tRandomSpriteRotation = m_pSpriteToShowBehindTargetWhenCameraZoom.localEulerAngles;
+		tRandomSpriteRotation.z += (fImpulse * m_fSpriteRotationSpeedInDegreesPerSecond) * Time.unscaledDeltaTime;
+		m_pSpriteToShowBehindTargetWhenCameraZoom.localEulerAngles = tRandomSpriteRotation;
 	}
 
 	private float Impulse(float fElapsed, float fStretch)
