@@ -3,14 +3,17 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 
-[CreateAssetMenu(fileName = "GrapplingHook", menuName = "PickupEffects/GrapplingHook")]
-public class GrapplingHook : PickupEffect
+[CreateAssetMenu(fileName = "GrapplingHookEffect", menuName = "PickupEffects/GrapplingHook")]
+public class GrapplingHookEffect : PickupEffect
 {
 #region Variables (public)
 
 	public string m_sShootInputName = "UseGrapplingHook";
 
+	public GrapplingHook m_pHookPrefab = null;
+
 	public float m_fAnticipationDurationInSeconds = 0.5f;
+	public float m_fAnticipationHandFinalDistanceBehind = 0.5f;
 
 	public float m_fTimeBetweenHookingAndTractionInSeconds = 0.1f;
 
@@ -22,9 +25,10 @@ public class GrapplingHook : PickupEffect
 
 	private const string c_sVariableName_fGrapplingHookUseTime = "fGrapplingHookUseTime";
 
-	private const string c_sVariableName_tGrapplingHookHeadPos = "tGrapplingHookHeadPos";
-	private const string c_sVariableName_fGrapplingHookHookingTime = "fGrapplingHookHookingTime";
+	private const string c_sVariableName_tGrapplingHookTractionDestination = "tGrapplingHookTractionDestination";
+	private const string c_sVariableName_pGrapplingHookObject = "pGrapplingHookObject";
 
+	private const string c_sVariableName_fGrapplingHookHookingTime = "fGrapplingHookHookingTime";
 	private const string c_sVariableName_bGrapplingHookHitWall = "bGrapplingHookHitWall";
 
 	#endregion
@@ -35,12 +39,16 @@ public class GrapplingHook : PickupEffect
 		pPickupsModule.GiveActiveEffect(this);
 
 		ResetVariables(pPickupsModule);
+
+		GrapplingHook pHook = Instantiate(m_pHookPrefab);
+		pPickupsModule.m_pMaster.m_pInventorySlotsModule.EquipItemInSlot(pHook.transform, EInventorySlot.BELT, false);
+		pPickupsModule.SetVariable(c_sVariableName_pGrapplingHookObject, pHook);
 	}
 
 	private void ResetVariables(PlayerPickupsModule pPickupsModule)
 	{
 		pPickupsModule.ResetVariable(c_sVariableName_fGrapplingHookUseTime);
-		pPickupsModule.ResetVariable(c_sVariableName_tGrapplingHookHeadPos);
+		pPickupsModule.ResetVariable(c_sVariableName_tGrapplingHookTractionDestination);   // TODO: At some point, should make sure the head is destroyed before removing the reference here
 		pPickupsModule.ResetVariable(c_sVariableName_fGrapplingHookHookingTime);
 	}
 
@@ -56,6 +64,9 @@ public class GrapplingHook : PickupEffect
 		{
 			pPickupsModule.SetVariable(c_sVariableName_fGrapplingHookUseTime, Time.time);
 			pPickupsModule.m_pMaster.SetBehaviourFrozen(true);
+
+			GrapplingHook pHook = (GrapplingHook)(pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
+			pPickupsModule.m_pMaster.m_pInventorySlotsModule.EquipItemInSlot(pHook.transform, EInventorySlot.HAND, false);
 		}
 	}
 
@@ -80,16 +91,13 @@ public class GrapplingHook : PickupEffect
 		else
 			tShootDirection = pPickupsModule.m_pMaster.transform.forward;
 
-		Vector3 tHitPosition = ShootHookForward(pPickupsModule, tShootDirection);
-		if (tHitPosition != Vector3.down)
-		{
-			pPickupsModule.m_pMaster.SetCurrentTileTarget(null);
-			pPickupsModule.m_pMaster.ClearInputsTileTarget();
-			pPickupsModule.m_pMaster.CanKillGhosts = true;
 
-			pPickupsModule.SetVariable(c_sVariableName_tGrapplingHookHeadPos, tHitPosition);
-			pPickupsModule.SetVariable(c_sVariableName_fGrapplingHookHookingTime, Time.time);
-		}
+		Vector3 tHookDestination = ShootHookForward(pPickupsModule, tShootDirection);
+
+		if (tHookDestination != Vector3.down)
+			InitTraction(pPickupsModule, tHookDestination);
+		else
+			AbortShot(pPickupsModule);
 	}
 
 	private Vector3 ShootHookForward(PlayerPickupsModule pPickupsModule, Vector3 tDirection)
@@ -98,12 +106,11 @@ public class GrapplingHook : PickupEffect
 
 		RaycastHit tHit;
 		if (!Physics.Raycast(pPickupsModule.m_pMaster.transform.position + (Vector3.up * 0.5f), tDirection, out tHit, c_fMaxRaycastDistance, LayerMask.GetMask("Wall", "Ghost"), QueryTriggerInteraction.Collide))
-		{
-			AbortShot(pPickupsModule);
 			return Vector3.down;
-		}
 
 		Vector3 tHitPos = tHit.point - (Vector3.up * 0.5f);
+		PinHookToDestination(pPickupsModule.m_pMaster, tHitPos);
+
 		if (tHit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
 		{
 			tHitPos = MapManager.Instance.GetTileFromPosition(tHitPos - (tDirection * 0.1f)).transform.position;
@@ -119,10 +126,36 @@ public class GrapplingHook : PickupEffect
 		return tHitPos;
 	}
 
+	private void PinHookToDestination(PlayerCharacter pPlayer, Vector3 tHookDestination)
+	{
+		GrapplingHook pHook = (GrapplingHook)(pPlayer.m_pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
+
+		pHook.m_pRopeObject.SetActive(true);
+
+		pHook.transform.parent = null;
+		pPlayer.m_pInventorySlotsModule.EquipItemInSlot(pHook.m_pRopeEnd, EInventorySlot.HAND, false);
+		pHook.m_pRopeEnd.localPosition = Vector3.zero;
+
+		pHook.transform.position = tHookDestination;
+		pHook.transform.rotation = pPlayer.transform.rotation;
+	}
+
 	private void AbortShot(PlayerPickupsModule pPickupsModule)
 	{
 		// TODO: Implement this
 		EffectEnd(pPickupsModule);
+	}
+
+	private void InitTraction(PlayerPickupsModule pPickupsModule, Vector3 tHookDestination)
+	{
+		PlayerCharacter pPlayer = pPickupsModule.m_pMaster;
+
+		pPlayer.SetCurrentTileTarget(null);
+		pPlayer.ClearInputsTileTarget();
+		pPlayer.CanKillGhosts = true;
+
+		pPickupsModule.SetVariable(c_sVariableName_tGrapplingHookTractionDestination, tHookDestination);
+		pPickupsModule.SetVariable(c_sVariableName_fGrapplingHookHookingTime, Time.time);
 	}
 
 	private void UpdateTraction(PlayerPickupsModule pPickupsModule, float fHookingTime)
@@ -134,7 +167,7 @@ public class GrapplingHook : PickupEffect
 
 		Vector3 tMoveThisFrame = pPlayerTransform.forward * (m_fTractionSpeed * Time.deltaTime);
 
-		Vector3 tHookHeadPos = (Vector3)(pPickupsModule.GetVariable(c_sVariableName_tGrapplingHookHeadPos));
+		Vector3 tHookHeadPos = (Vector3)(pPickupsModule.GetVariable(c_sVariableName_tGrapplingHookTractionDestination));
 		if (pPickupsModule.GetVariableAsBool(c_sVariableName_bGrapplingHookHitWall))
 			tHookHeadPos -= pPlayerTransform.forward * 0.1f;
 
@@ -143,6 +176,9 @@ public class GrapplingHook : PickupEffect
 		if (tPlayerToHook.sqrMagnitude <= tMoveThisFrame.sqrMagnitude)
 		{
 			pPlayerTransform.position = tHookHeadPos;
+
+			GrapplingHook pHook = (GrapplingHook)(pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
+			Destroy(pHook.gameObject);
 
 			EffectEnd(pPickupsModule);
 		}
