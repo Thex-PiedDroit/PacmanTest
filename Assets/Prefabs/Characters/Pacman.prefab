@@ -337,6 +337,8 @@ MonoBehaviour:
   m_pPickupsModule: {fileID: 114825896971917340}
   m_pInventorySlotsModule: {fileID: 114057665831942676}
   m_pNavMeshObstacle: {fileID: 208844703910428566}
+  m_pCollider: {fileID: 135158830439173354}
+  m_fColliderSizeIncreaseWhenAbleToKill: 1.5
   m_fMoveSpeed: 5
 --- !u!114 &114825896971917340
 MonoBehaviour:

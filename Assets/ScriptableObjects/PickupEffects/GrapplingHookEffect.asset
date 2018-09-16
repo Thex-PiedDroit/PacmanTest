@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Name: GrapplingHookEffect
   m_EditorClassIdentifier: 
   m_iPointsWorth: 500
+  m_pSuperGhostKillEffect: {fileID: 11400000, guid: e80bd5241f1d0044f97ceb0c788efebf,
+    type: 2}
   m_sShootInputName: UseGrapplingHook
   m_pHookPrefab: {fileID: 114609423848034518, guid: 289d7cbd90bd23944afd64d9abc33116,
     type: 2}
+  m_fMaxShootDistance: 50
   m_fAnticipationDurationInSeconds: 0.5
   m_fAnticipationHandFinalDistanceBehind: 0.5
   m_fTimeBetweenHookingAndTractionInSeconds: 0.1

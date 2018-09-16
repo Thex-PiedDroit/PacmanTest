@@ -12,6 +12,10 @@ public class PlayerCharacter : MonoBehaviour
 
 
 	public Action OnDeath = null;
+	/// <summary>
+	/// Ghost is killed ghost
+	/// </summary>
+	public Action<Ghost> OnKilledGhost = null;
 
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
 
@@ -19,9 +23,23 @@ public class PlayerCharacter : MonoBehaviour
 	public PlayerCharacterInventorySlotsModule m_pInventorySlotsModule = null;
 	public NavMeshObstacle m_pNavMeshObstacle = null;
 
+	public SphereCollider m_pCollider = null;
+	public float m_fColliderSizeIncreaseWhenAbleToKill = 1.2f;
+
 	public float m_fMoveSpeed = 5.0f;
 
-	public bool CanKillGhosts { get; set; } = false;
+	public bool CanKillGhosts
+	{
+		get
+		{
+			return m_bCanKillGhosts;
+		}
+		set
+		{
+			m_bCanKillGhosts = value;
+			m_pCollider.radius = m_fColliderDefaultRadius * (m_bCanKillGhosts ? m_fColliderSizeIncreaseWhenAbleToKill : 1.0f);
+		}
+	}
 
 	#endregion
 
@@ -34,10 +52,14 @@ public class PlayerCharacter : MonoBehaviour
 												// This system makes it possible to gracefully handle diagonal inputs while keeping movements non-diagonal. In other words: more complicated in order to feel better
 	private float m_fLastFrameMovementOvershoot = 0.0f;
 
+	private float m_fColliderDefaultRadius = 0.0f;
+
 	private bool m_bAlive = false;
 	private bool m_bHasntStartedMovingYet = false;
 
 	private bool m_bBehaviourFrozen = false;
+
+	private bool m_bCanKillGhosts = false;
 
 	#endregion
 
@@ -46,6 +68,8 @@ public class PlayerCharacter : MonoBehaviour
 	{
 		if (!Toolkit.InitSingleton(this, ref Instance))
 			return;
+
+		m_fColliderDefaultRadius = m_pCollider.radius;
 	}
 
 #region Behaviour
@@ -160,6 +184,11 @@ public class PlayerCharacter : MonoBehaviour
 	{
 		ResetPlayer();
 		OnDeath?.Invoke();
+	}
+
+	public void TriggerPlayerKilledGhost(Ghost pGhost)
+	{
+		OnKilledGhost?.Invoke(pGhost);
 	}
 
 	public void ResetPlayer()
