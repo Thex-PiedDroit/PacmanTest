@@ -188,9 +188,14 @@ public class PlayerCharacter : MonoBehaviour
 		m_pCurrentTileTarget = pTile;
 
 		if (pTile != null && pTile.transform.position != transform.position)
+		{
 			transform.forward = (pTile.transform.position - transform.position).normalized;
+		}
 		else
+		{
 			m_fLastFrameMovementOvershoot = 0.0f;
+			m_bHasntStartedMovingYet = true;
+		}
 	}
 
 	public void SetInputsTileTarget(Tile pTile)
