@@ -86,6 +86,8 @@ public class Ghost : MonoBehaviour
 		SetRagdollModeActivated(true);
 
 		OnDeath?.Invoke(this);
+
+		PlayerCharacter.Instance.TriggerPlayerKilledGhost(this);
 	}
 
 	/// <summary>
@@ -131,6 +133,7 @@ public class Ghost : MonoBehaviour
 	public void SetBehaviourFrozen(bool bFrozen)
 	{
 		m_bBehaviourFrozen = bFrozen;
+		m_pNavMeshAgent.enabled = !bFrozen;
 	}
 
 	private void OnTriggerEnter(Collider pOther)

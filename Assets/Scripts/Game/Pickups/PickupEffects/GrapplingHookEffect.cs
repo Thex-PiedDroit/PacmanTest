@@ -8,6 +8,8 @@ public class GrapplingHookEffect : PickupEffect
 {
 #region Variables (public)
 
+	public SuperGhostKillEffect m_pSuperGhostKillEffect = null;
+
 	public string m_sShootInputName = "UseGrapplingHook";
 
 	public GrapplingHook m_pHookPrefab = null;
@@ -46,19 +48,20 @@ public class GrapplingHookEffect : PickupEffect
 
 	override public void GiveEffectToPlayer(PlayerPickupsModule pPickupsModule)
 	{
+		if (pPickupsModule.HasActiveEffect(this))
+			return;
+
 		pPickupsModule.GiveActiveEffect(this);
 
-		GrapplingHook pPreviousHook = (GrapplingHook)(pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
-
 		ResetVariables(pPickupsModule);
-		InitHookObject(pPickupsModule, pPreviousHook);
+		InitHookObject(pPickupsModule);
 
 		pPickupsModule.SetVariable(c_sVariableName_eGrapplingHookCurrentStep, EGrapplingHookEffectStep.AWAITING_INPUT);
 	}
 
-	private void InitHookObject(PlayerPickupsModule pPickupsModule, GrapplingHook pPreviousHook)
+	private void InitHookObject(PlayerPickupsModule pPickupsModule)
 	{
-		GrapplingHook pHook = pPreviousHook ?? Instantiate(m_pHookPrefab);
+		GrapplingHook pHook = Instantiate(m_pHookPrefab);
 		pPickupsModule.m_pMaster.m_pInventorySlotsModule.EquipItemInSlot(pHook.transform, EInventorySlot.BELT, false);
 
 		pPickupsModule.SetVariable(c_sVariableName_pGrapplingHookObject, pHook);
@@ -176,6 +179,8 @@ public class GrapplingHookEffect : PickupEffect
 			Assert.IsTrue(pHitGhost != null, "The grappling hook hit something (" + tHit.collider.name + ") that is not a wall but not a ghost either? Something's wrong!");
 
 			pHitGhost.SetBehaviourFrozen(true);
+
+			tHitPos += (tDirection * 0.5f);	// To make sure we get through without dying first
 		}
 
 		PinHookToDestination(pPickupsModule.m_pMaster, tHitPos);
@@ -240,6 +245,7 @@ public class GrapplingHookEffect : PickupEffect
 	{
 		PlayerCharacter pPlayer = pPickupsModule.m_pMaster;
 		pPlayer.CanKillGhosts = true;
+		m_pSuperGhostKillEffect.HookEffect(pPickupsModule.m_pMaster);
 
 		pPickupsModule.SetVariable(c_sVariableName_tGrapplingHookTractionDestination, tHookDestination);
 		pPickupsModule.SetVariable(c_sVariableName_fGrapplingHookCurrentStepStartTime, Time.time);
@@ -281,6 +287,8 @@ public class GrapplingHookEffect : PickupEffect
 		Destroy(pHook.gameObject);
 
 		ResetVariables(pPickupsModule);
+
+		m_pSuperGhostKillEffect.DetachEffect(pPickupsModule.m_pMaster);
 
 		pPickupsModule.RemoveActiveEffect(this);
 		pPickupsModule.m_pMaster.SetBehaviourFrozen(false);
