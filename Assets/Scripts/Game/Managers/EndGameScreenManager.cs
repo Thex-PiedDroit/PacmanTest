@@ -36,6 +36,7 @@ public class EndGameScreenManager : MonoBehaviour
 	public void DisplayEndGameScreen()
 	{
 		ScoresManager.Instance.SetDisplayVisible(false);
+		ScoresManager.Instance.ResetCollectedPellets();
 
 		m_pScoreValueText.text = ScoresManager.Instance.m_pScoreValueText.text;
 		RegisterAndDisplayHighScore();

@@ -21,8 +21,9 @@ public class SuperPelletEffect : PickupEffect
 
 	override public void GiveEffectToPlayer(PlayerPickupsModule pPickupsModule)
 	{
+		pPickupsModule.RegisterPelletCollect();
 		pPickupsModule.SetVariable(c_sVariableName_fSuperPelletStartTime, Time.time);
-		GameManager.Instance.GiveFleeBehaviourToGhosts();
+		GhostsManager.Instance.GiveFleeBehaviourToGhosts();
 
 		if (!pPickupsModule.HasActiveEffect(this))
 		{
@@ -45,7 +46,7 @@ public class SuperPelletEffect : PickupEffect
 
 	override protected void EffectEnd(PlayerPickupsModule pPickupsModule)
 	{
-		GameManager.Instance.ResetGhostsToNormalBehaviour();
+		GhostsManager.Instance.ResetGhostsToNormalBehaviour();
 		pPickupsModule.RemoveActiveEffect(this);
 		PlayerCharacter.Instance.CanKillGhosts = false;
 		PlayerCharacter.Instance.m_pNavMeshObstacle.carving = false;

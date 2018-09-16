@@ -48,6 +48,7 @@ public class MapManager : MonoBehaviour
 	{
 		List<char> pTilesTypes = ExtractMapDataFromString(sMapName);
 		HideExcessTiles();
+		ScoresManager.Instance.ResetPelletsCountInMap();
 
 		m_pUnconnectedPortal = null;
 		m_iPlacedPortalVisuals = 0;
@@ -162,7 +163,7 @@ public class MapManager : MonoBehaviour
 				GameManager.Instance.SetPlayerSpawnTile(pTile);
 				break;
 			case ETileType.GHOST_SPAWNER:
-				GameManager.Instance.AddGhostSpawnTile(pTile);
+				GhostsManager.Instance.AddGhostSpawnTile(pTile);
 				break;
 		}
 	}

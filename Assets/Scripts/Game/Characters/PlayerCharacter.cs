@@ -26,6 +26,8 @@ public class PlayerCharacter : MonoBehaviour
 
 #region Variables (private)
 
+	private Tile m_pSpawnTile = null;
+
 	private Tile m_pCurrentTileTarget = null;	// Character will find the next one whenever reaching its target
 	private Tile m_pInputsTileTarget = null;	// If this is not null upon reaching the current target, and it is adjacent, this will become the new target. Otherwise, we will get closer before setting it as a target
 												// This system makes it possible to gracefully handle diagonal inputs while keeping movements non-diagonal. In other words: more complicated in order to feel better
@@ -151,12 +153,26 @@ public class PlayerCharacter : MonoBehaviour
 
 	public void KillPlayer()
 	{
+		ResetPlayer();
+		OnDeath?.Invoke();
+	}
+
+	public void ResetPlayer()
+	{
 		m_bAlive = false;
 		m_pCurrentTileTarget = null;
 		m_pInputsTileTarget = null;
 		m_pPickupsModule.ResetAllVariables();
+	}
 
-		OnDeath?.Invoke();
+	public void TeleportToSpawn()
+	{
+		transform.position = m_pSpawnTile.transform.position;
+	}
+
+	public void SetSpawnTile(Tile pTile)
+	{
+		m_pSpawnTile = pTile;
 	}
 
 	public void SetCurrentTileTarget(Tile pTile)
