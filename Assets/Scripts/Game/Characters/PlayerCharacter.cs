@@ -16,6 +16,7 @@ public class PlayerCharacter : MonoBehaviour
 	public PlayerCharacterBehaviour m_pPlayerCharacterBehaviour = null;
 
 	public PlayerPickupsModule m_pPickupsModule = null;
+	public PlayerCharacterInventorySlotsModule m_pInventorySlotsModule = null;
 	public NavMeshObstacle m_pNavMeshObstacle = null;
 
 	public float m_fMoveSpeed = 5.0f;
