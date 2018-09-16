@@ -190,6 +190,11 @@ public class MapManager : MonoBehaviour
 			m_pTiles[i].InitPellet();
 	}
 
+	public Tile GetTileFromPosition(Vector3 tPos)
+	{
+		return GetTileFromPosition(tPos.x, tPos.z);
+	}
+
 	public Tile GetTileFromPosition(float fPosX, float fPosZ)
 	{
 		Vector2 tHalfMapSize = GetHalfMapSize();
@@ -200,21 +205,69 @@ public class MapManager : MonoBehaviour
 		fPosZ -= tHalfMapSize.y;
 		fPosZ /= m_fTilesSize;
 
-		int iTileIndex = (int)fPosX - ((int)fPosZ * m_iGridSizeX);
+		int iTileIndex = Mathf.RoundToInt(fPosX) - (Mathf.RoundToInt(fPosZ) * m_iGridSizeX);
 
 		return (iTileIndex >= 0 && iTileIndex < m_pTiles.Count) ? m_pTiles[iTileIndex] : null;
 	}
 
-	public Vector3 GetPosOnMapFurtherFromPosition(Vector3 tPos)
+	public Tile GetAdjacentTileFurtherFromPosition(Vector3 tPosToAvoid, Tile pCurrentTile, Tile pExcludedTile)
 	{
-		Vector2 tHalfMapSize = GetHalfMapSize();
+		Vector3 tCurrentPos = pCurrentTile.transform.position;
 
-		float fXInNearestConer = tHalfMapSize.x * (tPos.x >= 0.0f ? 1.0f : -1.0f);
-		float fZInNearestConer = tHalfMapSize.y * (tPos.z >= 0.0f ? 1.0f : -1.0f);
+		/*		Check directly in opposite direction fist		*/
+		Vector3 tOppositeDirection = FlattenDirectionOnOneAxis(tCurrentPos - tPosToAvoid);
+		Tile pTileFurther = GetWalkableTileInDirection(tOppositeDirection, tCurrentPos);
 
-		Vector3 tPosPushedOnNearestCorner = new Vector3(fXInNearestConer, 0.0f, fZInNearestConer);
+		if (pTileFurther != null && pTileFurther != pExcludedTile && pTileFurther.IsWalkable())
+			return pTileFurther;
 
-		return -tPosPushedOnNearestCorner;	// Opposite corner
+
+		/*		Then check both left and right and return the nearest one (or none if to exclude)		*/
+		Vector3 tLeftDirection = tOppositeDirection.Rotate90AroundY();
+		Vector3 tRightDirection = -tLeftDirection;
+
+		Tile pLeftTile = GetWalkableTileInDirection(tLeftDirection, tCurrentPos);
+		if (pLeftTile == null || pLeftTile == pExcludedTile || !pLeftTile.IsWalkable())
+			pLeftTile = null;
+
+		Tile pRightTile = GetWalkableTileInDirection(tRightDirection, tCurrentPos);
+		if (pRightTile == null || pRightTile == pExcludedTile || !pRightTile.IsWalkable())
+			pRightTile = null;
+
+		/*		Check if one clear winner		*/
+		if (pLeftTile == null && pRightTile == null)
+			return null;
+		if (pLeftTile == null && pRightTile != null)
+			return pRightTile;
+		if (pRightTile == null && pLeftTile != null)
+			return pLeftTile;
+
+		/*		If both possible, return the one further from target		*/
+		float fSqrdDistanceToLeft = (pLeftTile.transform.position - tPosToAvoid).sqrMagnitude;
+		float fSqrdDistanceToRight = (pRightTile.transform.position - tPosToAvoid).sqrMagnitude;
+
+		return fSqrdDistanceToLeft >= fSqrdDistanceToRight ? pLeftTile : pRightTile;
+	}
+
+	private Vector3 FlattenDirectionOnOneAxis(Vector3 tDirection)
+	{
+		float fX = 0.0f;
+		float fZ = 0.0f;
+
+		if (tDirection.x.Sqrd() >= tDirection.z.Sqrd())
+			fX = tDirection.x > 0.0f ? 1.0f : -1.0f;
+		else
+			fZ = tDirection.z > 0.0f ? 1.0f : -1.0f;
+
+		return new Vector3(fX, 0.0f, fZ);
+	}
+
+	public Tile GetWalkableTileInDirection(Vector3 tDirection, Vector3 tFromPosition)
+	{
+		const float c_fDistanceInFrontOfPositionToRaycastFrom = 1.1f;   // Slightly more than 1.0f in order to be sure to reach the next tile even from the very edge of one
+
+		Tile pTile = GetTileFromPosition(tFromPosition + (tDirection * c_fDistanceInFrontOfPositionToRaycastFrom));
+		return pTile.IsWalkable() ? pTile : null;
 	}
 
 

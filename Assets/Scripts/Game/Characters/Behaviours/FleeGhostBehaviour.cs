@@ -1,8 +1,9 @@
 ﻿
 using UnityEngine;
+using UnityEngine.AI;
 
 
-[CreateAssetMenu(fileName = "FleeGhostBehaviour", menuName = "GhostsBehaviours/Flee")]
+[CreateAssetMenu(fileName = "FleeGhost", menuName = "GhostsBehaviours/Flee")]
 public class FleeGhostBehaviour : GhostBehaviour
 {
 #region Variables (public)
@@ -16,6 +17,9 @@ public class FleeGhostBehaviour : GhostBehaviour
 
 	static private float s_fTimeWarningStarted = 0.0f;
 
+	private const string c_sVariableName_pTileLastFrame = "pTileLastFrame";
+	private const string c_sVariableName_pTileWeJustLeft = "pTileWeJustLeft";
+
 	#endregion
 
 
@@ -25,18 +29,52 @@ public class FleeGhostBehaviour : GhostBehaviour
 
 		pGhost.m_pNavMeshAgent.speed = pGhost.m_fRegularSpeed * m_fSpeedMultiplier;
 		s_fTimeWarningStarted = 0.0f;
+
+		InitVariables(pGhost);
+	}
+
+	/// <summary>
+	/// Public so it can be used by other behaviours if needed (NOTHING ELSE!)
+	/// </summary>
+	public void InitVariables(Ghost pGhost)
+	{
+		pGhost.m_pProceduralVariablesModule.ResetVariable(c_sVariableName_pTileLastFrame);
+		pGhost.m_pProceduralVariablesModule.ResetVariable(c_sVariableName_pTileWeJustLeft);
 	}
 
 	override public void UpdateGhostBehaviour(Ghost pGhost)
 	{
 		if (!pGhost.IsDead())
-		{
-			Vector3 tPosFurtherToPlayer = MapManager.Instance.GetPosOnMapFurtherFromPosition(PlayerCharacter.Instance.transform.position);  // TODO: Find a better way to flee, this is a bit lackluster
-			pGhost.m_pNavMeshAgent.SetDestination(tPosFurtherToPlayer);
-		}
+			UpdateFleeMovement(pGhost);
 
 		if (GameManager.Instance.SuperPelletEffectAboutToWearOut)
 			UpdateEffectEndWarning(pGhost);
+	}
+
+	/// <summary>
+	/// Public so it can be used by other behaviours if needed (NOTHING ELSE!)
+	/// </summary>
+	public void UpdateFleeMovement(Ghost pGhost)
+	{
+		Tile pCurrentTile = MapManager.Instance.GetTileFromPosition(pGhost.transform.position);
+		UpdateSavedTiles(pGhost, pCurrentTile);
+
+		Tile pTileWeJustLeft = (Tile)(pGhost.m_pProceduralVariablesModule.GetVariable(c_sVariableName_pTileWeJustLeft));
+
+		Tile pTileFurtherFromPlayer = MapManager.Instance.GetAdjacentTileFurtherFromPosition(PlayerCharacter.Instance.transform.position, pCurrentTile, pTileWeJustLeft);
+		if (pTileFurtherFromPlayer != null)
+			pGhost.m_pNavMeshAgent.SetDestination(pTileFurtherFromPlayer.transform.position);
+		else
+			pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pCurrentTile);     // Since there's no valid adjacent tile, don't exclude last tile anymore, cause it might become the best option
+	}
+
+	private void UpdateSavedTiles(Ghost pGhost, Tile pCurrentTile)
+	{
+		Tile pTileLastFrame = (Tile)(pGhost.m_pProceduralVariablesModule.GetVariable(c_sVariableName_pTileLastFrame));
+		if (pCurrentTile != pTileLastFrame)
+			pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pTileLastFrame);
+
+		pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_pTileLastFrame, pCurrentTile);
 	}
 
 	private void UpdateEffectEndWarning(Ghost pGhost)

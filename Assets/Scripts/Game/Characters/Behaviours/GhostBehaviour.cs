@@ -15,6 +15,8 @@ abstract public class GhostBehaviour : ScriptableObject
 	{
 		pGhost.SetGhostColor(m_tGhostColor);
 		pGhost.m_pNavMeshAgent.speed = pGhost.m_fRegularSpeed;
+		pGhost.m_pNavMeshAgent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+		pGhost.m_pNavMeshAgent.avoidancePriority = 50;
 	}
 
 	/// <summary>

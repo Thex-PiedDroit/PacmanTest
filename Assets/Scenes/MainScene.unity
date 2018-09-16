@@ -31273,6 +31273,8 @@ MonoBehaviour:
     type: 2}
   m_pGhostsBehaviours:
   - {fileID: 11400000, guid: d5c438e74c228234eb4415d1d7431722, type: 2}
+  - {fileID: 11400000, guid: 568493cc4b765a048b69d1354f1d225d, type: 2}
+  - {fileID: 11400000, guid: 74cdfcb1a66692a4eac974a5b6f91d7f, type: 2}
 --- !u!1001 &1130568407
 Prefab:
   m_ObjectHideFlags: 0
