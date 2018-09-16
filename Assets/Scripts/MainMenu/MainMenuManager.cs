@@ -27,7 +27,7 @@ public class MainMenuManager : MonoBehaviour
 #if UNITY_EDITOR
 		if (SceneUtility.GetBuildIndexByScenePath("Scenes/" + m_sMainSceneName) == -1)
 		{
-			EditorUtility.DisplayDialog("Invalid main scene name", "The scene name specified in the " + GetType() + " was not found in the Scenes folder.\n\nMake sure the " + GetType() + " has the right name and the scene is in the Scenes folder please.", "Oki doki");
+			Toolkit.DisplayImportantErrorMessage("Invalid main scene name", "The scene name specified in the " + GetType() + " was not found in the Scenes folder.\n\nMake sure the " + GetType() + " has the right name and the scene is in the Scenes folder please.");
 			return;
 		}
 #endif

@@ -14,9 +14,7 @@ static public class Toolkit
 		{
 			if (pCurrentInstance != r_pInstanceObject)
 			{
-#if UNITY_EDITOR
-				EditorUtility.DisplayDialog("Singleton duplicate found", "A second instance of " + pCurrentInstance.GetType() + " on the object \"" + pCurrentInstance.name + "\" has been found and has been destroyed. Please remove one of them from the scene", "Will do");
-#endif
+				DisplayImportantErrorMessage("Singleton duplicate found", "A second instance of " + pCurrentInstance.GetType() + " on the object \"" + pCurrentInstance.name + "\" has been found and has been destroyed. Please remove one of them from the scene");
 				GameObject.Destroy(pCurrentInstance);
 			}
 
@@ -25,6 +23,14 @@ static public class Toolkit
 
 		r_pInstanceObject = pCurrentInstance;
 		return true;
+	}
+
+	static public void DisplayImportantErrorMessage(string sMessageHeader, string sMessage)
+	{
+#if UNITY_EDITOR
+		EditorUtility.DisplayDialog(sMessageHeader, sMessage, "Oki doki");
+#endif
+		Debug.LogError(sMessage);
 	}
 
 	static public Vector3 FlattenDirectionOnOneAxis(Vector3 tDirection)
