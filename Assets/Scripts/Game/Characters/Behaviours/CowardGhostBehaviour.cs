@@ -10,6 +10,8 @@ public class CowardGhostBehaviour : GhostBehaviour
 	public float m_fDistanceFromPlayerToStartFleeingInMeters = 8.0f;
 	public float m_fDistanceFromPlayerToStartFollowingAgainInMeters = 12.0f;
 
+	public FleeGhostBehaviour m_pFleeBehaviour = null;
+
 	#endregion
 
 #region Variables (private)
@@ -37,14 +39,9 @@ public class CowardGhostBehaviour : GhostBehaviour
 		pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_bCowardIsFleeing, bShouldFlee);
 
 		if (bShouldFlee)
-		{
-			Vector3 tPosFurtherToPlayer = MapManager.Instance.GetPosOnMapFurtherFromPosition(PlayerCharacter.Instance.transform.position);  // TODO: Find a better way to flee, this is a bit lackluster
-			pGhost.m_pNavMeshAgent.SetDestination(tPosFurtherToPlayer);
-		}
+			m_pFleeBehaviour.UpdateFleeMovement(pGhost);
 		else
-		{
 			pGhost.m_pNavMeshAgent.SetDestination(PlayerCharacter.Instance.transform.position);
-		}
 	}
 
 	private bool ShouldFlee(Ghost pGhost, float fSqrdDistanceFromPlayer)
@@ -61,6 +58,7 @@ public class CowardGhostBehaviour : GhostBehaviour
 		else if (fSqrdDistanceFromPlayer <= m_fDistanceFromPlayerToStartFleeingInMeters.Sqrd())
 		{
 			bShouldFlee = true;
+			m_pFleeBehaviour.InitVariables(pGhost);
 		}
 
 		return bShouldFlee;

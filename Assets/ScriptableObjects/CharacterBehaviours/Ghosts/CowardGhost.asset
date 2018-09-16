@@ -14,3 +14,4 @@ MonoBehaviour:
   m_tGhostColor: {r: 1, g: 0.6551726, b: 0, a: 1}
   m_fDistanceFromPlayerToStartFleeingInMeters: 4
   m_fDistanceFromPlayerToStartFollowingAgainInMeters: 8
+  m_pFleeBehaviour: {fileID: 11400000, guid: c2ceaf9fa4c8dcd419842d393537b701, type: 2}
