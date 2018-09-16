@@ -12,6 +12,8 @@ public class GrapplingHookEffect : PickupEffect
 
 	public GrapplingHook m_pHookPrefab = null;
 
+	public float m_fMaxShootDistance = 50.0f;
+
 	public float m_fAnticipationDurationInSeconds = 0.5f;
 	public float m_fAnticipationHandFinalDistanceBehind = 0.5f;
 
@@ -36,10 +38,6 @@ public class GrapplingHookEffect : PickupEffect
 
 	private const string c_sVariableName_pGrapplingHookObject = "pGrapplingHookObject";
 	private const string c_sVariableName_tGrapplingHookTractionDestination = "tGrapplingHookTractionDestination";
-
-
-	static private readonly float s_fMaxRaycastDistance = 20.0f;
-	static private readonly Vector3 s_tInvalidShootDirection = Vector3.down;
 
 	#endregion
 
@@ -123,12 +121,6 @@ public class GrapplingHookEffect : PickupEffect
 
 	private void UpdateAnticipation(PlayerPickupsModule pPickupsModule)
 	{
-		float fInputPressTime = (float)(pPickupsModule.GetVariable(c_sVariableName_fGrapplingHookCurrentStepStartTime, 0.0f));
-
-		if (Time.time - fInputPressTime < m_fAnticipationDurationInSeconds)
-			return;		// TODO: Add hand animation
-
-
 		Vector3 tShootDirection = Toolkit.QueryMoveDirectionInput();
 
 		if (tShootDirection != Vector3.zero)
@@ -136,27 +128,47 @@ public class GrapplingHookEffect : PickupEffect
 		else
 			tShootDirection = pPickupsModule.m_pMaster.transform.forward;
 
+		float fInputPressTime = (float)(pPickupsModule.GetVariable(c_sVariableName_fGrapplingHookCurrentStepStartTime, 0.0f));
+		if (Time.time - fInputPressTime < m_fAnticipationDurationInSeconds)
+			return;     // TODO: Add hand animation
 
-		Vector3 tHookDestination = ShootHookInDirection(pPickupsModule, tShootDirection);
 
-		if (tHookDestination != s_tInvalidShootDirection)
+		Vector3 tHookDestination;
+		bool bSuccess = ShootHookInDirection(pPickupsModule, tShootDirection, out tHookDestination);
+
+		if (bSuccess)
 			InitTraction(pPickupsModule, tHookDestination);
 		else
-			AbortShot(pPickupsModule);
+			AbortShot(pPickupsModule, tHookDestination);
 	}
 
-	private Vector3 ShootHookInDirection(PlayerPickupsModule pPickupsModule, Vector3 tDirection)
+	private bool ShootHookInDirection(PlayerPickupsModule pPickupsModule, Vector3 tDirection, out Vector3 tHitPos)
 	{
-		RaycastHit tHit;
-		if (!Physics.Raycast(pPickupsModule.m_pMaster.transform.position + (Vector3.up * 0.5f), tDirection, out tHit, s_fMaxRaycastDistance, LayerMask.GetMask("Wall", "Ghost"), QueryTriggerInteraction.Collide))
-			return s_tInvalidShootDirection;
+		/*		Abort player's movement		*/
+		PlayerCharacter pPlayer = pPickupsModule.m_pMaster;
 
-		Vector3 tHitPos = tHit.point - (Vector3.up * 0.5f);
-		PinHookToDestination(pPickupsModule.m_pMaster, tHitPos);
+		pPlayer.SetCurrentTileTarget(null);
+		pPlayer.ClearInputsTileTarget();
+
+
+		RaycastHit tHit;
+		if (!Physics.Raycast(pPickupsModule.m_pMaster.transform.position + (Vector3.up * 0.5f), tDirection, out tHit, m_fMaxShootDistance, LayerMask.GetMask("Wall", "Ghost"), QueryTriggerInteraction.Collide))
+		{
+			tHitPos = pPickupsModule.m_pMaster.transform.position + (tDirection * m_fMaxShootDistance);
+			return false;
+		}
+
+		tHitPos = tHit.point - (Vector3.up * 0.5f);
 
 		if (tHit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
 		{
-			tHitPos = MapManager.Instance.GetTileFromPosition(tHitPos - (tDirection * 0.1f)).transform.position;
+			Tile pActualTileDestination = MapManager.Instance.GetTileFromPosition(tHitPos - (tDirection * 0.1f));
+			Tile pCurrentTile = MapManager.Instance.GetTileFromPosition(pPickupsModule.m_pMaster.transform.position);
+
+			if (pActualTileDestination == pCurrentTile)
+				return false;
+
+			tHitPos = pActualTileDestination.transform.position;
 		}
 		else
 		{
@@ -166,7 +178,9 @@ public class GrapplingHookEffect : PickupEffect
 			pHitGhost.SetBehaviourFrozen(true);
 		}
 
-		return tHitPos;
+		PinHookToDestination(pPickupsModule.m_pMaster, tHitPos);
+
+		return true;
 	}
 
 	private void PinHookToDestination(PlayerCharacter pPlayer, Vector3 tHookDestination)
@@ -187,12 +201,11 @@ public class GrapplingHookEffect : PickupEffect
 
 #region Abort
 
-	private void AbortShot(PlayerPickupsModule pPickupsModule)
+	private void AbortShot(PlayerPickupsModule pPickupsModule, Vector3 tHookDestination)
 	{
 		pPickupsModule.SetVariable(c_sVariableName_eGrapplingHookCurrentStep, EGrapplingHookEffectStep.ABORTED);
 
-		PlayerCharacter pPlayer = pPickupsModule.m_pMaster;
-		PinHookToDestination(pPlayer, pPlayer.transform.position + (pPlayer.transform.forward * s_fMaxRaycastDistance));	// Just show the hook for a frame, for visual feedback on why it's got aborted
+		PinHookToDestination(pPickupsModule.m_pMaster, tHookDestination);	// Just show the hook for a frame, for visual feedback on why it's got aborted
 	}
 
 	private void ResetVariablesAfterAbort(PlayerPickupsModule pPickupsModule)
@@ -226,9 +239,6 @@ public class GrapplingHookEffect : PickupEffect
 	private void InitTraction(PlayerPickupsModule pPickupsModule, Vector3 tHookDestination)
 	{
 		PlayerCharacter pPlayer = pPickupsModule.m_pMaster;
-
-		pPlayer.SetCurrentTileTarget(null);
-		pPlayer.ClearInputsTileTarget();
 		pPlayer.CanKillGhosts = true;
 
 		pPickupsModule.SetVariable(c_sVariableName_tGrapplingHookTractionDestination, tHookDestination);
