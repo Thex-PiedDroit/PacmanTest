@@ -216,7 +216,7 @@ public class MapManager : MonoBehaviour
 		Vector3 tCurrentPos = pCurrentTile.transform.position;
 
 		/*		Check directly in opposite direction fist		*/
-		Vector3 tOppositeDirection = FlattenDirectionOnOneAxis(tCurrentPos - tPosToAvoid);
+		Vector3 tOppositeDirection = Toolkit.FlattenDirectionOnOneAxis(tCurrentPos - tPosToAvoid);
 		Tile pTileFurther = GetWalkableTileInDirection(tOppositeDirection, tCurrentPos);
 
 		if (pTileFurther != null && pTileFurther != pExcludedTile && pTileFurther.IsWalkable())
@@ -248,19 +248,6 @@ public class MapManager : MonoBehaviour
 		float fSqrdDistanceToRight = (pRightTile.transform.position - tPosToAvoid).sqrMagnitude;
 
 		return fSqrdDistanceToLeft >= fSqrdDistanceToRight ? pLeftTile : pRightTile;
-	}
-
-	private Vector3 FlattenDirectionOnOneAxis(Vector3 tDirection)
-	{
-		float fX = 0.0f;
-		float fZ = 0.0f;
-
-		if (tDirection.x.Sqrd() >= tDirection.z.Sqrd())
-			fX = tDirection.x > 0.0f ? 1.0f : -1.0f;
-		else
-			fZ = tDirection.z > 0.0f ? 1.0f : -1.0f;
-
-		return new Vector3(fX, 0.0f, fZ);
 	}
 
 	public Tile GetWalkableTileInDirection(Vector3 tDirection, Vector3 tFromPosition)

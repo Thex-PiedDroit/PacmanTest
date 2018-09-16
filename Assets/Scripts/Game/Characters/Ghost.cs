@@ -36,6 +36,8 @@ public class Ghost : MonoBehaviour
 	private bool m_bAlive = false;
 	private bool m_bRagdollActive = false;
 
+	private bool m_bBehaviourFrozen = false;
+
 	#endregion
 
 
@@ -47,7 +49,7 @@ public class Ghost : MonoBehaviour
 
 	private void Update()
 	{
-		if (m_pBehaviour != null)
+		if (m_pBehaviour != null && !m_bBehaviourFrozen)
 			m_pBehaviour.UpdateGhostBehaviour(this);
 	}
 
@@ -79,6 +81,7 @@ public class Ghost : MonoBehaviour
 	{
 		SetDead();
 		SetRagdollModeActivated(true);
+
 		OnDeath?.Invoke(this);
 	}
 
@@ -89,12 +92,12 @@ public class Ghost : MonoBehaviour
 	{
 		m_bAlive = false;
 		m_pNavMeshAgent.enabled = false;
+		SetBehaviourFrozen(false);
 	}
 
 	public void SetAlive()
 	{
 		SetRagdollModeActivated(false);
-		SetGhostColor(m_pBehaviour.m_tGhostColor);
 
 		m_bAlive = true;
 		transform.position = m_pSpawnTile.transform.position;
@@ -111,12 +114,18 @@ public class Ghost : MonoBehaviour
 	private void SetRagdollModeActivated(bool bActivated)
 	{
 		m_bRagdollActive = bActivated;
+		SetGhostColor(m_pBehaviour.m_tGhostColor);
 
 		m_pRigidbody.isKinematic = !bActivated;
 		m_pRigidbody.useGravity = bActivated;
 
 		if (!bActivated)
 			transform.rotation = Quaternion.identity;
+	}
+
+	public void SetBehaviourFrozen(bool bFrozen)
+	{
+		m_bBehaviourFrozen = bFrozen;
 	}
 
 	private void OnTriggerEnter(Collider pOther)

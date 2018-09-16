@@ -36,6 +36,8 @@ public class PlayerCharacter : MonoBehaviour
 	private bool m_bAlive = false;
 	private bool m_bHasntStartedMovingYet = false;
 
+	private bool m_bBehaviourFrozen = false;
+
 	#endregion
 
 
@@ -49,7 +51,7 @@ public class PlayerCharacter : MonoBehaviour
 
 	private void Update()
 	{
-		if (!m_bAlive)
+		if (!m_bAlive || m_bBehaviourFrozen)
 			return;
 
 		m_pPlayerCharacterBehaviour.UpdateCharacterTileTargets(this);
@@ -163,6 +165,11 @@ public class PlayerCharacter : MonoBehaviour
 		m_pCurrentTileTarget = null;
 		m_pInputsTileTarget = null;
 		m_pPickupsModule.ResetAllVariables();
+	}
+
+	public void SetBehaviourFrozen(bool bFrozen)
+	{
+		m_bBehaviourFrozen = bFrozen;
 	}
 
 	public void TeleportToSpawn()

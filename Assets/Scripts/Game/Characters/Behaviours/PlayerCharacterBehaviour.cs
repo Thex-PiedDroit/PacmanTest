@@ -8,7 +8,7 @@ public class PlayerCharacterBehaviour : ScriptableObject
 {
 	public void UpdateCharacterTileTargets(PlayerCharacter pCharacter)
 	{
-		Vector3 tMoveDirection = QueryMoveInputs();
+		Vector3 tMoveDirection = Toolkit.QueryMoveDirectionInput();
 		Vector3 tCurrentCharacterForward = pCharacter.transform.forward;
 
 		if (tMoveDirection == Vector3.zero)
@@ -35,15 +35,5 @@ public class PlayerCharacterBehaviour : ScriptableObject
 			if (pNextTileInDirection != null && (pNextTileInDirection.transform.position - tCurrentTargetPosition).normalized != tCurrentCharacterForward)
 				pCharacter.SetInputsTileTarget(pNextTileInDirection);
 		}
-	}
-
-	private Vector3 QueryMoveInputs()
-	{
-		float fHorizontal = Input.GetAxis("Horizontal");
-		float fVertical = Input.GetAxis("Vertical");
-
-		Vector3 tInputVector = new Vector3(fHorizontal, 0.0f, fVertical);
-
-		return tInputVector.sqrMagnitude > 0.0025f ? tInputVector.normalized : Vector3.zero;
 	}
 }

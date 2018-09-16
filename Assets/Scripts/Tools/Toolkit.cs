@@ -27,6 +27,29 @@ static public class Toolkit
 		return true;
 	}
 
+	static public Vector3 FlattenDirectionOnOneAxis(Vector3 tDirection)
+	{
+		float fX = 0.0f;
+		float fZ = 0.0f;
+
+		if (tDirection.x.Sqrd() >= tDirection.z.Sqrd())
+			fX = tDirection.x > 0.0f ? 1.0f : -1.0f;
+		else
+			fZ = tDirection.z > 0.0f ? 1.0f : -1.0f;
+
+		return new Vector3(fX, 0.0f, fZ);
+	}
+
+	static public Vector3 QueryMoveDirectionInput()
+	{
+		float fHorizontal = Input.GetAxis("Horizontal");
+		float fVertical = Input.GetAxis("Vertical");
+
+		Vector3 tInputVector = new Vector3(fHorizontal, 0.0f, fVertical);
+
+		return tInputVector.sqrMagnitude > 0.0025f ? tInputVector.normalized : Vector3.zero;
+	}
+
 
 	static public float Sqrd(this float fMe)
 	{

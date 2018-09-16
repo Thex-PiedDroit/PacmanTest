@@ -1,5 +1,4 @@
 ﻿
-using UnityEngine;
 using UnityEngine.Assertions;
 using System;
 using System.Collections.Generic;
@@ -18,6 +17,8 @@ public class PlayerPickupsModule : CharacterProceduralVariablesModule
 	/// Any pellet or super pellet
 	/// </summary>
 	public Action OnPelletCollected = null;
+
+	public PlayerCharacter m_pMaster = null;
 
 	#endregion
 

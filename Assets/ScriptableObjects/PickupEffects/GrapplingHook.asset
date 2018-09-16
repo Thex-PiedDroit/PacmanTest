@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d30ff401b08f34444bc7d707dcb8c1ca, type: 3}
+  m_Name: GrapplingHook
+  m_EditorClassIdentifier: 
+  m_iPointsWorth: 500
+  m_sShootInputName: UseGrapplingHook
+  m_fAnticipationDurationInSeconds: 0.5
+  m_fTimeBetweenHookingAndTractionInSeconds: 0.1
+  m_fTractionSpeed: 40
