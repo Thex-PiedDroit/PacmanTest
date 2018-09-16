@@ -80,8 +80,10 @@ public class FleeGhostBehaviour : GhostBehaviour
 		Tile pTileFurtherFromPlayer = MapManager.Instance.GetAdjacentTileFurtherFromPosition(PlayerCharacter.Instance.transform.position, pCurrentTile, pTileWeJustLeft);
 		if (pTileFurtherFromPlayer != null)
 			pGhost.m_pNavMeshAgent.SetDestination(pTileFurtherFromPlayer.transform.position);
-		else
-			pVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pCurrentTile);     // Since there's no valid adjacent tile, don't exclude last tile anymore, cause it might become the best option
+
+
+		if (pTileFurtherFromPlayer == null || pTileWeJustLeft == null)
+			pVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pCurrentTile);	// If no further tile, should allow backtrack if needed, and if no tile just left, prevent backtracking by putting the current one just in case
 	}
 
 	private void GetOutOfPrison(Ghost pGhost)
