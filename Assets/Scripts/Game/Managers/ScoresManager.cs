@@ -24,6 +24,9 @@ public class ScoresManager : MonoBehaviour
 
 	private int m_iCurrentLivesDisplayed = 0;
 
+	private int m_iTotalPelletsCountInMap = 0;
+	private int m_iCollectedPellets = 0;
+
 	#endregion
 
 
@@ -35,8 +38,11 @@ public class ScoresManager : MonoBehaviour
 
 	private void Start()
 	{
-		PlayerCharacter.Instance.m_pPickupsModule.OnPointsGained += UpdateScore;
-		PlayerCharacter.Instance.OnDeath += RemoveLife;
+		PlayerCharacter pPlayer = PlayerCharacter.Instance;
+
+		pPlayer.m_pPickupsModule.OnPointsGained += UpdateScore;
+		pPlayer.m_pPickupsModule.OnPelletCollected += RegisterPelletCollected;
+		pPlayer.OnDeath += RemoveLife;
 	}
 
 	private void OnDestroy()
@@ -46,15 +52,13 @@ public class ScoresManager : MonoBehaviour
 		if (pPlayer != null)
 		{
 			if (pPlayer.m_pPickupsModule != null)
+			{
 				pPlayer.m_pPickupsModule.OnPointsGained -= UpdateScore;
+				pPlayer.m_pPickupsModule.OnPelletCollected += RegisterPelletCollected;
+			}
 
 			pPlayer.OnDeath += RemoveLife;
 		}
-	}
-
-	private void UpdateScore(int iCurrentScore)
-	{
-		m_pScoreValueText.text = iCurrentScore.ToString();
 	}
 
 	public void InitLives(int iLivesCount)
@@ -86,6 +90,26 @@ public class ScoresManager : MonoBehaviour
 		return pNewSprite;
 	}
 
+	public void RegisterPellet()
+	{
+		++m_iTotalPelletsCountInMap;
+	}
+
+	public void ResetPelletsCountInMap()
+	{
+		m_iTotalPelletsCountInMap = 0;
+	}
+
+	public void ResetCollectedPellets()
+	{
+		m_iCollectedPellets = 0;
+	}
+
+	private void UpdateScore(int iCurrentScore)
+	{
+		m_pScoreValueText.text = iCurrentScore.ToString();
+	}
+
 	private void RemoveLife()
 	{
 		if (m_iCurrentLivesDisplayed == 0)
@@ -93,6 +117,17 @@ public class ScoresManager : MonoBehaviour
 
 		--m_iCurrentLivesDisplayed;
 		m_pLivesSprites[m_iCurrentLivesDisplayed].gameObject.SetActive(false);
+	}
+
+	private void RegisterPelletCollected()
+	{
+		++m_iCollectedPellets;
+
+		if (m_iCollectedPellets >= m_iTotalPelletsCountInMap)
+		{
+			ResetCollectedPellets();
+			GameManager.Instance.WinGame();
+		}
 	}
 
 	public void SetDisplayVisible(bool bVisible)

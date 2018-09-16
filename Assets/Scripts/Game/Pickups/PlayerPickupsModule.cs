@@ -14,6 +14,11 @@ public class PlayerPickupsModule : CharacterProceduralVariablesModule
 	/// </summary>
 	public Action<int> OnPointsGained = null;
 
+	/// <summary>
+	/// Any pellet or super pellet
+	/// </summary>
+	public Action OnPelletCollected = null;
+
 	#endregion
 
 #region Variables (private)
@@ -46,6 +51,8 @@ public class PlayerPickupsModule : CharacterProceduralVariablesModule
 	public void RegisterPelletCollect()
 	{
 		++m_iCollectedPellets;
+
+		OnPelletCollected?.Invoke();
 	}
 
 	public int GetCurrentPelletsCount()

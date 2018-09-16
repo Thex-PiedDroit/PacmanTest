@@ -41,7 +41,10 @@ public class Tile : MonoBehaviour
 	public void SetTileType(ETileType eTileType)
 	{
 		m_eTileType = eTileType;
-		
+
+		if (m_eTileType == ETileType.PELLET || m_eTileType == ETileType.SUPER_PELLET)
+			ScoresManager.Instance.RegisterPellet();
+
 		m_pWallObject.SetActive(eTileType == ETileType.WALL);
 		InitPellet();
 	}

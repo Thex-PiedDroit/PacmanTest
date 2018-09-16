@@ -80,7 +80,8 @@ public class GameManager : MonoBehaviour
 	private void SpawnPlayerCharacter()
 	{
 		PlayerCharacter pPlayer = PlayerCharacter.Instance ?? Instantiate(m_pPlayerCharacterPrefab, m_pPlayerCharacterContainer);
-		pPlayer.transform.position = m_pPlayerSpawnTile.transform.position;
+		pPlayer.SetSpawnTile(m_pPlayerSpawnTile);
+		pPlayer.TeleportToSpawn();
 
 		pPlayer.OnDeath -= PlayerGotKilled;
 		pPlayer.OnDeath += PlayerGotKilled;
@@ -89,7 +90,7 @@ public class GameManager : MonoBehaviour
 	private void RespawnPlayer()
 	{
 		PlayerCharacter pPlayer = PlayerCharacter.Instance;
-		pPlayer.transform.position = m_pPlayerSpawnTile.transform.position;
+		pPlayer.TeleportToSpawn();
 		pPlayer.m_pPickupsModule.ResetCollectedPellets();
 	}
 
@@ -106,6 +107,13 @@ public class GameManager : MonoBehaviour
 	{
 		GhostsManager.Instance.SetAllGhostsDead();
 		EndGameScreenManager.Instance.DisplayEndGameScreen();
+	}
+
+	public void WinGame()
+	{
+		PlayerCharacter.Instance.ResetPlayer();
+		MapManager.Instance.ResetTilesWithCurrentMap();
+		LaunchGame();
 	}
 
 

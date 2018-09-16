@@ -21,6 +21,7 @@ public class SuperPelletEffect : PickupEffect
 
 	override public void GiveEffectToPlayer(PlayerPickupsModule pPickupsModule)
 	{
+		pPickupsModule.RegisterPelletCollect();
 		pPickupsModule.SetVariable(c_sVariableName_fSuperPelletStartTime, Time.time);
 		GhostsManager.Instance.GiveFleeBehaviourToGhosts();
 

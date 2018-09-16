@@ -48,6 +48,7 @@ public class MapManager : MonoBehaviour
 	{
 		List<char> pTilesTypes = ExtractMapDataFromString(sMapName);
 		HideExcessTiles();
+		ScoresManager.Instance.ResetPelletsCountInMap();
 
 		m_pUnconnectedPortal = null;
 		m_iPlacedPortalVisuals = 0;

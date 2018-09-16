@@ -99,6 +99,9 @@ public class Ghost : MonoBehaviour
 
 	private void OnTriggerEnter(Collider pOther)
 	{
+		if (!m_bAlive)
+			return;
+
 		PlayerCharacter pPlayer = pOther.GetComponent<PlayerCharacter>();
 		Assert.IsTrue(pPlayer != null, "A ghost has collided with something that is not the player character (" + pOther.name + "). Please make sure the layers and collisions are correctly setup.");
 
