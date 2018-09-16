@@ -96,7 +96,7 @@ public class Ghost : MonoBehaviour
 	public void SetDead()
 	{
 		m_bAlive = false;
-		m_pNavMeshAgent.enabled = false;
+		m_pNavMeshAgent.enabled = false;		// TODO: For some reason this won't work.. Not a critical issue but should be investigated further
 		SetBehaviourFrozen(false);
 	}
 
@@ -138,7 +138,7 @@ public class Ghost : MonoBehaviour
 
 	private void OnTriggerEnter(Collider pOther)
 	{
-		if (!m_bAlive || pOther.gameObject.layer == LayerMask.NameToLayer("Ground") || pOther.gameObject.layer == LayerMask.NameToLayer("Wall"))
+		if (!m_bAlive || IsCollisionLayerUnimportant(pOther))
 			return;
 
 		PlayerCharacter pPlayer = pOther.GetComponent<PlayerCharacter>();
@@ -148,5 +148,10 @@ public class Ghost : MonoBehaviour
 			pPlayer.KillPlayer();
 		else
 			KillGhost();
+	}
+
+	private bool IsCollisionLayerUnimportant(Collider pOther)
+	{
+		return pOther.gameObject.layer == LayerMask.NameToLayer("Ground") || pOther.gameObject.layer == LayerMask.NameToLayer("Wall") || pOther.gameObject.layer == LayerMask.NameToLayer(m_sDeadLayerName);
 	}
 }
