@@ -1,7 +1,6 @@
 ﻿
+using System;
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
 
 
 public class GameManager : MonoBehaviour
@@ -11,11 +10,18 @@ public class GameManager : MonoBehaviour
 	static public GameManager Instance = null;
 
 
+	/// <summary>
+	/// Both from GameOver and Win
+	/// </summary>
+	public Action OnGameEnd = null;
+
 	public GameModeData m_pGameModeData = null;
 
 	public PlayerCharacter m_pPlayerCharacterPrefab = null;
 
 	public Transform m_pPlayerCharacterContainer = null;
+
+	public CountDownModule m_pCountDownModule = null;
 
 	public bool SuperPelletEffectAboutToWearOut { get; set; } = false;
 
@@ -48,6 +54,9 @@ public class GameManager : MonoBehaviour
 	{
 		if (PlayerCharacter.Instance != null)
 			PlayerCharacter.Instance.OnDeath -= PlayerGotKilled;
+
+		if (m_pCountDownModule != null)
+			m_pCountDownModule.OnCountDownFinished -= StartGameAfterCountDown;
 	}
 
 	public void RestartGame()
@@ -69,7 +78,15 @@ public class GameManager : MonoBehaviour
 		SpawnPlayerCharacter();
 		GhostsManager.Instance.SpawnGhosts();
 
-			// TODO: Game start countdown here
+
+		m_pCountDownModule.LaunchCountDown(m_pGameModeData.m_iBeforeStartCountDownDurationInSeconds);
+		m_pCountDownModule.OnCountDownFinished += StartGameAfterCountDown;
+	}
+
+	private void StartGameAfterCountDown()
+	{
+		m_pCountDownModule.OnCountDownFinished -= StartGameAfterCountDown;
+
 		PlayerCharacter.Instance.MakePlayerAlive();
 		GhostsManager.Instance.ReleaseNextGhostNow();
 
@@ -105,16 +122,24 @@ public class GameManager : MonoBehaviour
 
 	private void RespawnGame()
 	{
+		SetGameStopped();
+
 		RespawnPlayer();
 		GhostsManager.Instance.SpawnGhosts();
 
-		PlayerCharacter.Instance.MakePlayerAlive();
-		GhostsManager.Instance.ReleaseNextGhostNow();
+		m_pCountDownModule.LaunchCountDown(m_pGameModeData.m_iBeforeStartCountDownDurationInSeconds);
+		m_pCountDownModule.OnCountDownFinished += StartGameAfterCountDown;
+	}
+
+	private void SetGameStopped()
+	{
+		m_bGameIsPlaying = false;
+		OnGameEnd?.Invoke();
 	}
 
 	private void GameOver()
 	{
-		m_bGameIsPlaying = false;
+		SetGameStopped();
 
 		GhostsManager.Instance.SetAllGhostsDead();
 		EndGameScreenManager.Instance.DisplayEndGameScreen();
@@ -122,7 +147,7 @@ public class GameManager : MonoBehaviour
 
 	public void WinGame()
 	{
-		m_bGameIsPlaying = false;
+		SetGameStopped();
 
 		PlayerCharacter.Instance.ResetPlayer();
 		MapManager.Instance.ResetTilesWithCurrentMap();

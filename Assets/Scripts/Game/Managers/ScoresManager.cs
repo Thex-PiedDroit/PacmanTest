@@ -12,6 +12,7 @@ public class ScoresManager : MonoBehaviour
 
 
 	public GameObject m_pScoresDisplay = null;
+	public GameObject m_pDebugDisplay = null;
 
 	public TextMeshProUGUI m_pScoreValueText = null;
 
@@ -133,5 +134,6 @@ public class ScoresManager : MonoBehaviour
 	public void SetDisplayVisible(bool bVisible)
 	{
 		m_pScoresDisplay.SetActive(bVisible);
+		m_pDebugDisplay.SetActive(bVisible);
 	}
 }

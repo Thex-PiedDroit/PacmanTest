@@ -37,6 +37,17 @@ public class PlayerPickupsModule : CharacterProceduralVariablesModule
 		m_pCurrentActivePickupEffects = new List<PickupEffect>();
 	}
 
+	private void Start()
+	{
+		GameManager.Instance.OnGameEnd += TerminateAllActiveEffects;
+	}
+
+	private void OnDestroy()
+	{
+		if (GameManager.Instance != null)
+			GameManager.Instance.OnGameEnd -= TerminateAllActiveEffects;
+	}
+
 	private void Update()
 	{
 		for (int i = m_pCurrentActivePickupEffects.Count - 1; i >= 0; --i)	// In reverse cause effects might remove themselves while looping
@@ -88,5 +99,11 @@ public class PlayerPickupsModule : CharacterProceduralVariablesModule
 	public void RemoveActiveEffect(PickupEffect pEffect)
 	{
 		m_pCurrentActivePickupEffects.Remove(pEffect);
+	}
+
+	private void TerminateAllActiveEffects()
+	{
+		for (int i = m_pCurrentActivePickupEffects.Count - 1; i >= 0; --i)
+			m_pCurrentActivePickupEffects[i].EffectEnd(this);
 	}
 }

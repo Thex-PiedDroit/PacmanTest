@@ -35,7 +35,7 @@ abstract public class PickupEffect : ScriptableObject
 	/// <summary>
 	/// Has to be called by children!
 	/// </summary>
-	virtual protected void EffectEnd(PlayerPickupsModule pPickupsModule)
+	virtual public void EffectEnd(PlayerPickupsModule pPickupsModule)
 	{
 		pPickupsModule.RemoveActiveEffect(this);
 	}

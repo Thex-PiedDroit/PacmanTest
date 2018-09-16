@@ -152,6 +152,8 @@ public class PlayerCharacter : MonoBehaviour
 	{
 		m_bAlive = true;
 		m_bHasntStartedMovingYet = true;
+
+		m_pPickupsModule.ResetAllVariables();
 	}
 
 	public void KillPlayer()
@@ -165,7 +167,6 @@ public class PlayerCharacter : MonoBehaviour
 		m_bAlive = false;
 		m_pCurrentTileTarget = null;
 		m_pInputsTileTarget = null;
-		m_pPickupsModule.ResetAllVariables();
 	}
 
 	public void SetBehaviourFrozen(bool bFrozen)

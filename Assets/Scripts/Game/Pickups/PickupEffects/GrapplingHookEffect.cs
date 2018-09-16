@@ -254,10 +254,6 @@ public class GrapplingHookEffect : PickupEffect
 		if (tHookToPlayer.sqrMagnitude <= tMoveThisFrame.sqrMagnitude)
 		{
 			pPlayerTransform.position = tHookHeadPos;
-
-			GrapplingHook pHook = (GrapplingHook)(pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
-			Destroy(pHook.gameObject);
-
 			EffectEnd(pPickupsModule);
 		}
 		else
@@ -269,8 +265,11 @@ public class GrapplingHookEffect : PickupEffect
 	#endregion
 
 
-	override protected void EffectEnd(PlayerPickupsModule pPickupsModule)
+	override public void EffectEnd(PlayerPickupsModule pPickupsModule)
 	{
+		GrapplingHook pHook = (GrapplingHook)(pPickupsModule.GetVariable(c_sVariableName_pGrapplingHookObject));
+		Destroy(pHook.gameObject);
+
 		ResetVariables(pPickupsModule);
 
 		pPickupsModule.RemoveActiveEffect(this);

@@ -21,6 +21,12 @@ public class GrapplingHook : MonoBehaviour
 	#endregion
 
 
+	private void OnDestroy()
+	{
+		if (m_pRopeEnd != null)
+			Destroy(m_pRopeEnd.gameObject);	// It might not be a child anymore (therefore kill it, just like an alligator)
+	}
+
 	private void LateUpdate()
 	{
 		if (m_pRopeObject.activeSelf)
