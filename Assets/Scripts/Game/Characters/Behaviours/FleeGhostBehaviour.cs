@@ -20,6 +20,9 @@ public class FleeGhostBehaviour : GhostBehaviour
 	private const string c_sVariableName_pTileLastFrame = "pTileLastFrame";
 	private const string c_sVariableName_pTileWeJustLeft = "pTileWeJustLeft";
 
+	private const string c_sVariableName_bReceivedBehaviourWhileInPrison = "bReceivedFleeBehaviourWhileInPrison";
+	private const string c_sVariableName_bFleeBehaviourWentOnPrisonDoor = "bFleeBehaviourWentOnPrisonDoor";
+
 	#endregion
 
 
@@ -38,8 +41,13 @@ public class FleeGhostBehaviour : GhostBehaviour
 	/// </summary>
 	public void InitVariables(Ghost pGhost)
 	{
-		pGhost.m_pProceduralVariablesModule.ResetVariable(c_sVariableName_pTileLastFrame);
-		pGhost.m_pProceduralVariablesModule.ResetVariable(c_sVariableName_pTileWeJustLeft);
+		CharacterProceduralVariablesModule pVariablesModule = pGhost.m_pProceduralVariablesModule;
+
+		pVariablesModule.ResetVariable(c_sVariableName_pTileLastFrame);
+		pVariablesModule.ResetVariable(c_sVariableName_pTileWeJustLeft);
+
+		pVariablesModule.SetVariable(c_sVariableName_bReceivedBehaviourWhileInPrison, pGhost.IsDead());
+		pVariablesModule.ResetVariable(c_sVariableName_bFleeBehaviourWentOnPrisonDoor);
 	}
 
 	override public void UpdateGhostBehaviour(Ghost pGhost)
@@ -56,25 +64,50 @@ public class FleeGhostBehaviour : GhostBehaviour
 	/// </summary>
 	public void UpdateFleeMovement(Ghost pGhost)
 	{
+		CharacterProceduralVariablesModule pVariablesModule = pGhost.m_pProceduralVariablesModule;
+
+		if (pVariablesModule.GetVariableAsBool(c_sVariableName_bReceivedBehaviourWhileInPrison))
+		{
+			GetOutOfPrison(pGhost);
+			return;
+		}
+
 		Tile pCurrentTile = MapManager.Instance.GetTileFromPosition(pGhost.transform.position);
 		UpdateSavedTiles(pGhost, pCurrentTile);
 
-		Tile pTileWeJustLeft = (Tile)(pGhost.m_pProceduralVariablesModule.GetVariable(c_sVariableName_pTileWeJustLeft));
+		Tile pTileWeJustLeft = (Tile)(pVariablesModule.GetVariable(c_sVariableName_pTileWeJustLeft));
 
 		Tile pTileFurtherFromPlayer = MapManager.Instance.GetAdjacentTileFurtherFromPosition(PlayerCharacter.Instance.transform.position, pCurrentTile, pTileWeJustLeft);
 		if (pTileFurtherFromPlayer != null)
 			pGhost.m_pNavMeshAgent.SetDestination(pTileFurtherFromPlayer.transform.position);
 		else
-			pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pCurrentTile);     // Since there's no valid adjacent tile, don't exclude last tile anymore, cause it might become the best option
+			pVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pCurrentTile);     // Since there's no valid adjacent tile, don't exclude last tile anymore, cause it might become the best option
+	}
+
+	private void GetOutOfPrison(Ghost pGhost)
+	{
+		CharacterProceduralVariablesModule pVariablesModule = pGhost.m_pProceduralVariablesModule;
+
+		bool bWentOnPrisonDoor = pVariablesModule.GetVariableAsBool(c_sVariableName_bFleeBehaviourWentOnPrisonDoor);
+		bool bCurrentTileIsGhostDoor = MapManager.Instance.GetTileFromPosition(pGhost.transform.position).TileType == ETileType.GHOST_DOOR;
+
+		if (!bWentOnPrisonDoor)
+			pVariablesModule.SetVariable(c_sVariableName_bFleeBehaviourWentOnPrisonDoor, bCurrentTileIsGhostDoor);
+		else if (!bCurrentTileIsGhostDoor)
+			pVariablesModule.SetVariable(c_sVariableName_bReceivedBehaviourWhileInPrison, false);
+
+		pGhost.m_pNavMeshAgent.SetDestination(PlayerCharacter.Instance.transform.position);
 	}
 
 	private void UpdateSavedTiles(Ghost pGhost, Tile pCurrentTile)
 	{
-		Tile pTileLastFrame = (Tile)(pGhost.m_pProceduralVariablesModule.GetVariable(c_sVariableName_pTileLastFrame));
-		if (pCurrentTile != pTileLastFrame)
-			pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pTileLastFrame);
+		CharacterProceduralVariablesModule pVariablesModule = pGhost.m_pProceduralVariablesModule;
 
-		pGhost.m_pProceduralVariablesModule.SetVariable(c_sVariableName_pTileLastFrame, pCurrentTile);
+		Tile pTileLastFrame = (Tile)(pVariablesModule.GetVariable(c_sVariableName_pTileLastFrame));
+		if (pCurrentTile != pTileLastFrame)
+			pVariablesModule.SetVariable(c_sVariableName_pTileWeJustLeft, pTileLastFrame);
+
+		pVariablesModule.SetVariable(c_sVariableName_pTileLastFrame, pCurrentTile);
 	}
 
 	private void UpdateEffectEndWarning(Ghost pGhost)
