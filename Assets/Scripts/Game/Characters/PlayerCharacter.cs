@@ -98,7 +98,7 @@ public class PlayerCharacter : MonoBehaviour
 		}
 		else
 		{
-			pNextTileTarget = m_pPlayerCharacterBehaviour.FindWalkableTileInDirection(transform.forward, m_pCurrentTileTarget.transform.position);
+			pNextTileTarget = MapManager.Instance.GetWalkableTileInDirection(transform.forward, m_pCurrentTileTarget.transform.position);
 		}
 
 		SetCurrentTileTarget(pNextTileTarget);
@@ -130,7 +130,7 @@ public class PlayerCharacter : MonoBehaviour
 	{
 		Tile pTileTarget = null;
 
-		if (m_pInputsTileTarget.IsAdjacentTo(MapManager.Instance.GetTileFromPosition(transform.position.x, transform.position.z)))
+		if (m_pInputsTileTarget.IsAdjacentTo(MapManager.Instance.GetTileFromPosition(transform.position)))
 			pTileTarget = m_pInputsTileTarget;		// If it's already adjacent to where we are, directly go there
 		else
 			pTileTarget = FindAdjacentTileClosestToInputsTarget();

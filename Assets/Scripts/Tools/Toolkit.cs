@@ -33,6 +33,11 @@ static public class Toolkit
 		return fMe * fMe;
 	}
 
+	static public Vector3 Rotate90AroundY(this Vector3 tVec)
+	{
+		return new Vector3(-tVec.z, tVec.y, tVec.x);
+	}
+
 
 #if UNITY_EDITOR
 	[MenuItem("Tools/Reserialize all files")]

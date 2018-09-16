@@ -16,6 +16,8 @@ public class FleeGhostBehaviour : GhostBehaviour
 
 	static private float s_fTimeWarningStarted = 0.0f;
 
+
+
 	#endregion
 
 
@@ -31,8 +33,9 @@ public class FleeGhostBehaviour : GhostBehaviour
 	{
 		if (!pGhost.IsDead())
 		{
-			Vector3 tPosFurtherToPlayer = MapManager.Instance.GetPosOnMapFurtherFromPosition(PlayerCharacter.Instance.transform.position);  // TODO: Find a better way to flee, this is a bit lackluster
-			pGhost.m_pNavMeshAgent.SetDestination(tPosFurtherToPlayer);
+			Tile pTileFurtherFromPlayer = MapManager.Instance.GetAdjacentTileFurtherFromPosition(PlayerCharacter.Instance.transform.position, pGhost.transform.position);
+			if (pTileFurtherFromPlayer != null)
+				pGhost.m_pNavMeshAgent.SetDestination(pTileFurtherFromPlayer.transform.position);
 		}
 
 		if (GameManager.Instance.SuperPelletEffectAboutToWearOut)
