@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 
-[CreateAssetMenu(fileName = "StrategistGhostBehaviour", menuName = "GhostsBehaviours/Strategist")]
+[CreateAssetMenu(fileName = "StrategistGhost", menuName = "GhostsBehaviours/Strategist")]
 public class StrategistGhostBehaviour : GhostBehaviour
 {
 #region Variables (public)

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-[CreateAssetMenu(fileName = "FleeGhostBehaviour", menuName = "GhostsBehaviours/Flee")]
+[CreateAssetMenu(fileName = "FleeGhost", menuName = "GhostsBehaviours/Flee")]
 public class FleeGhostBehaviour : GhostBehaviour
 {
 #region Variables (public)

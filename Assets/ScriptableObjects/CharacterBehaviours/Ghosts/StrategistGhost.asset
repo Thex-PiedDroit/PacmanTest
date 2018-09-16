@@ -9,6 +9,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7aeba02e75b6f6f43af1757da5f14c5f, type: 3}
-  m_Name: StrategistGhostBehaviour
+  m_Name: StrategistGhost
   m_EditorClassIdentifier: 
   m_tGhostColor: {r: 0.94447434, g: 0.44459772, b: 0.9716981, a: 1}
