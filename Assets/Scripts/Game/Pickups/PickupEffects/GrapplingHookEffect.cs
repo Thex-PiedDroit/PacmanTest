@@ -180,7 +180,7 @@ public class GrapplingHookEffect : PickupEffect
 
 			pHitGhost.SetBehaviourFrozen(true);
 
-			tHitPos += (tDirection * 0.5f);	// To make sure we get through without dying first
+			tHitPos += (tDirection * 0.6f);	// To make sure we get through without dying first
 		}
 
 		PinHookToDestination(pPickupsModule.m_pMaster, tHitPos);

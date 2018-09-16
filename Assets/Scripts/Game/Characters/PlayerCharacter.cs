@@ -1,7 +1,8 @@
 ﻿
-using System;
 using UnityEngine;
 using UnityEngine.AI;
+using System;
+using System.Collections;
 
 
 public class PlayerCharacter : MonoBehaviour
@@ -36,7 +37,11 @@ public class PlayerCharacter : MonoBehaviour
 		}
 		set
 		{
-			m_bCanKillGhosts = value;
+			if (value)
+				m_bCanKillGhosts = true;
+			else if (!m_bAboutToNotBeAbleToKillGhosts)
+				StartCoroutine(WaitALittleBitBeforeDeactivatingAbilityToKill());
+
 			m_pCollider.radius = m_fColliderDefaultRadius * (m_bCanKillGhosts ? m_fColliderSizeIncreaseWhenAbleToKill : 1.0f);
 		}
 	}
@@ -60,6 +65,7 @@ public class PlayerCharacter : MonoBehaviour
 	private bool m_bBehaviourFrozen = false;
 
 	private bool m_bCanKillGhosts = false;
+	private bool m_bAboutToNotBeAbleToKillGhosts = false;
 
 	#endregion
 
@@ -165,6 +171,20 @@ public class PlayerCharacter : MonoBehaviour
 			pTileTarget = FindAdjacentTileClosestToInputsTarget();
 
 		return pTileTarget;
+	}
+
+	private IEnumerator WaitALittleBitBeforeDeactivatingAbilityToKill()	// For the "last second" effect + security with grappling hook kills
+	{
+		m_bAboutToNotBeAbleToKillGhosts = true;
+
+		float fStartTime = Time.unscaledTime;
+		const float c_fTimeToWait = 0.25f;
+
+		while (Time.unscaledTime - fStartTime < c_fTimeToWait)
+			yield return false;
+
+		m_bCanKillGhosts = false;
+		m_bAboutToNotBeAbleToKillGhosts = false;
 	}
 
 	#endregion
